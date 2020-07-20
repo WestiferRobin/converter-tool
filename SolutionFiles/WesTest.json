@@ -1,0 +1,28 @@
+{
+  "name": "Wesley Webb",
+  "age": 27,
+  "sex_number": 666.69,
+  "bdate": "03/12/1993",
+  "job": {
+    "tech": "engineer",
+    "years": 3
+  },
+  "fdsa": false,
+  "asdf": true,
+  "interest": [
+    {
+      "type": "star wars",
+      "id": 0
+    },
+    {
+      "type": "guitar",
+      "id": 1
+    },
+    {
+      "type": "coding",
+      "id": 2
+    }
+  ],
+  "neg": -123,
+  "neg_doub": -321.123
+}

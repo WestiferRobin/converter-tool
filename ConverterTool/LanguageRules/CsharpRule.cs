@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ConverterTool.Logger;
+using ConverterTool.WrapperTypes;
 
 namespace ConverterTool.LanguageRules
 {
@@ -10,7 +10,7 @@ namespace ConverterTool.LanguageRules
     {
         public CsharpRule(string filename) : base(LanguageType.PROGRAM_LANG, ProgramType.C_SHARP, filename)
         {
-
+            this.CreateKeywords();
         }
 
         public override void BuildFile()
@@ -18,13 +18,97 @@ namespace ConverterTool.LanguageRules
             Log.Warn("Csharp BuildFile is not ready.");
         }
 
+        public int AddHeader(int index)
+        {
+            var otherHeaders = new WrapperObject("HEADERS", new List<WrapperType>());
+            while (this.TokenList[index].ToLower() != "namespace")
+            {
+                if (this.TokenList[index].ToLower() == "using")
+                {
+                    index++;
+                    if (this.TokenList[index].ToLower() == "system")
+                    {
+                        while (this.TokenList[index] != ";")
+                            index++;
+                    }
+                    else
+                    {
+                        string location = string.Empty;
+                        while (this.TokenList[index] != ";")
+                            location += this.TokenList[index++];
+                        otherHeaders.Value.Add(new WrapperString("IMPORT", location));
+                    }
+                }
+                index++;
+            }
+            this.Structure.Add(otherHeaders);
+            return index;
+        }
+
+        private int AddClass(int index)
+        {
+            var classObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
+
+            if (this.TokenList[index].ToLower() != "namespace")
+                throw new Exception("This is not an accurate namespace.");
+            index++;
+            index++;    // TODO: Do this for the make file bullshit
+
+            if (this.TokenList[index] != "{")
+                throw new Exception("This is an invalid class opener.");
+            index++;
+
+            if (this.TokenList[index].ToLower() == "public" ||
+            this.TokenList[index].ToLower() == "private" ||
+            this.TokenList[index].ToLower() == "protected")
+            {
+                classObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
+            }
+            else
+            {
+                classObject.Value.Add(new WrapperString("ACCESS_MOD", "public"));
+            }
+
+            if (this.TokenList[index].ToLower() == "static")
+            {
+                classObject.Value.Add(new WrapperBool("IS_STATIC", true));
+                index++;
+            }
+            else
+            {
+                classObject.Value.Add(new WrapperBool("IS_STATIC", false));
+            }
+
+            if (this.TokenList[index].ToLower() != "class")
+                throw new Exception("This is not an accurate class.");
+            index++;
+
+            classObject.VariableName = this.TokenList[index++];
+
+            if (this.TokenList[index] != "{")
+                throw new Exception("This is an invalid class opener.");
+            index++;
+
+            for (; index < this.TokenList.Count - 2; index++) ;
+
+            if (this.TokenList[index] != "}")
+                throw new Exception("This is an invalid class opener.");
+            index++;
+
+            if (this.TokenList[index] != "}")
+                throw new Exception("This is an invalid class opener.");
+            index++;
+
+            this.Structure.Add(classObject);
+            return index;
+        }
+
         public override void ParseFile()
         {
             Log.Info("Staring to Parse Csharp file.");
-            foreach(var keyword in this.TokenList)
-            {
-                //Log.Info(keyword);
-            }
+            int index = 0;
+            index = this.AddHeader(index);
+            _ = this.AddClass(index);
             Log.Success("Parsing Csharp is Completed.");
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Values;
 
 namespace HelloWorldSharp
 {
@@ -9,14 +10,6 @@ namespace HelloWorldSharp
     {
         // this is going to be a problem...
         private static string _randomMessage;
-        public static string GetRandomMessage()
-        {
-            return _randomMessage;
-        }
-        public static void SetRandomMessage(String value)
-        {
-            _randomMessage = value;
-        }
 
         public static void Main(string[] args)
         {
@@ -31,6 +24,17 @@ namespace HelloWorldSharp
             fdsa
             asdf
             */
+            var asdf = new Values(123);
+            Console.WriteLine(asdf.Value);
+        }
+
+        public static string GetRandomMessage()
+        {
+            return _randomMessage;
+        }
+        public static void SetRandomMessage(String value)
+        {
+            _randomMessage = value;
         }
 
         public static void PrintMessage(int size)

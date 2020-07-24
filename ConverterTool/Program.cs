@@ -50,10 +50,10 @@ namespace ConverterTool
                 }
                 else
                 {
-                    //sourceFile = string.Concat(FILE_PATH, "HelloWorldSharp.cs");
-                    //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
-                    sourceFile = string.Concat(FILE_PATH, "HelloWorldJ.java");
-                    targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
+                    sourceFile = string.Concat(FILE_PATH, "HelloWorldSharp.cs");
+                    targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
+                    //sourceFile = string.Concat(FILE_PATH, "HelloWorldJ.java");
+                    //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
 
                     Log.Info("Conversion Tool is now running.");
 

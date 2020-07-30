@@ -121,8 +121,8 @@ namespace ConverterTool.LanguageRules
 
                     if (this.TokenList[index++] != "<")
                         throw new Exception("Invalid Token. Need \'<\' for name of value");
-                    if (this.TokenList[index++] != $"/{mainNode.VariableName + "Array"}")
-                        throw new Exception($"Invalid Token. Need closing name {mainNode.VariableName} for name of value");
+                    if (this.TokenList[index++] != $"/{mainNode.WrapperName + "Array"}")
+                        throw new Exception($"Invalid Token. Need closing name {mainNode.WrapperName} for name of value");
                     if (this.TokenList[index++] != ">")
                         throw new Exception("Invalid Token. Need \'>\' for name of value");
                 }
@@ -135,8 +135,8 @@ namespace ConverterTool.LanguageRules
 
                     if (this.TokenList[index++] != "<")
                         throw new Exception("Invalid Token. Need \'<\' for name of value");
-                    if (this.TokenList[index++] != $"/{mainNode.VariableName}")
-                        throw new Exception($"Invalid Token. Need closing name {mainNode.VariableName} for name of value");
+                    if (this.TokenList[index++] != $"/{mainNode.WrapperName}")
+                        throw new Exception($"Invalid Token. Need closing name {mainNode.WrapperName} for name of value");
                     if (this.TokenList[index++] != ">")
                         throw new Exception("Invalid Token. Need \'>\' for name of value");
                 }
@@ -219,7 +219,7 @@ namespace ConverterTool.LanguageRules
             {
                 if (this.TokenList[index++] != "<")
                     throw new Exception("Invalid Token. Need \'<\' for name of value");
-                if (this.TokenList[index] == $"/{parentNode.VariableName}")
+                if (this.TokenList[index] == $"/{parentNode.WrapperName}")
                     break;
                 string valueName = this.TokenList[index++];
                 if (this.TokenList[index++] != ">")
@@ -233,15 +233,15 @@ namespace ConverterTool.LanguageRules
         private int ParseArray(int index, WrapperArray parentNode)
         {
             parentNode.Value = new List<WrapperObject>();
-            string jsonName = parentNode.VariableName.Split("Array")[0];
+            string jsonName = parentNode.WrapperName.Split("Array")[0];
             int id = 0;
             while (index < this.TokenList.Count)
             {
                 if (this.TokenList[index++] != "<")
                     throw new Exception("Invalid Token. Need \'<\' for name of value");
-                if (this.TokenList[index] == $"/{parentNode.VariableName}")
+                if (this.TokenList[index] == $"/{parentNode.WrapperName}")
                 {
-                    parentNode.VariableName = jsonName;
+                    parentNode.WrapperName = jsonName;
                     break;
                 }
                 if (this.TokenList[index++] != jsonName)
@@ -252,7 +252,7 @@ namespace ConverterTool.LanguageRules
                 WrapperObject childNode = new WrapperObject(jsonName, null);
                 index = ParseObject(index, childNode);
                 childNode.Value.Add(new WrapperInt("id", id));
-                childNode.VariableName = "ID-" + id++;
+                childNode.WrapperName = "ID-" + id++;
                 parentNode.Value.Add(childNode);
 
                 if (this.TokenList[index++] != "<")
@@ -267,10 +267,10 @@ namespace ConverterTool.LanguageRules
 
         private void BuildObject(WrapperObject mainNode, string tabs)
         {
-            this.Results += $"{tabs}<{mainNode.VariableName}>\n";
+            this.Results += $"{tabs}<{mainNode.WrapperName}>\n";
             foreach (var node in mainNode.Value)
             {
-                if (node.VariableName.ToLower() == "id")
+                if (node.WrapperName.ToLower() == "id")
                     continue;
                 switch (node)
                 {
@@ -281,39 +281,39 @@ namespace ConverterTool.LanguageRules
                         BuildObject(wrapperObject, tabs + "\t");
                         break;
                     case WrapperBool wrapperBool:
-                        this.Results += $"{tabs + "\t"}<{wrapperBool.VariableName}>{wrapperBool.Value}</{wrapperBool.VariableName}>\n";
+                        this.Results += $"{tabs + "\t"}<{wrapperBool.WrapperName}>{wrapperBool.Value}</{wrapperBool.WrapperName}>\n";
                         break;
                     case WrapperDouble wrapperDouble:
-                        this.Results += $"{tabs + "\t"}<{wrapperDouble.VariableName}>{wrapperDouble.Value}</{wrapperDouble.VariableName}>\n";
+                        this.Results += $"{tabs + "\t"}<{wrapperDouble.WrapperName}>{wrapperDouble.Value}</{wrapperDouble.WrapperName}>\n";
                         break;
                     case WrapperInt wrapperInt:
-                        this.Results += $"{tabs + "\t"}<{wrapperInt.VariableName}>{wrapperInt.Value}</{wrapperInt.VariableName}>\n";
+                        this.Results += $"{tabs + "\t"}<{wrapperInt.WrapperName}>{wrapperInt.Value}</{wrapperInt.WrapperName}>\n";
                         break;
                     case WrapperString wrapperString:
-                        this.Results += $"{tabs + "\t"}<{wrapperString.VariableName}>{wrapperString.Value}</{wrapperString.VariableName}>\n";
+                        this.Results += $"{tabs + "\t"}<{wrapperString.WrapperName}>{wrapperString.Value}</{wrapperString.WrapperName}>\n";
                         break;
                     default:
                         throw new Exception("This type is invalid for build the file.");
                 }
             }
-            this.Results += $"{tabs}</{mainNode.VariableName}>\n";
+            this.Results += $"{tabs}</{mainNode.WrapperName}>\n";
         }
 
         private void BuildArray(WrapperArray mainNode, string tabs)
         {
-            this.Results += $"{tabs}<{mainNode.VariableName}Array>\n";
+            this.Results += $"{tabs}<{mainNode.WrapperName}Array>\n";
             foreach (var node in mainNode.Value)
             {
                 switch (node)
                 {
                     case WrapperObject wrapperObject:
-                        wrapperObject.VariableName = mainNode.VariableName;
+                        wrapperObject.WrapperName = mainNode.WrapperName;
                         BuildObject(wrapperObject, tabs + "\t");
                         break;
                         throw new Exception("This type is invalid for build the file.");
                 }
             }
-            this.Results += $"{tabs}</{mainNode.VariableName}Array>\n";
+            this.Results += $"{tabs}</{mainNode.WrapperName}Array>\n";
         }
 
         public override void BuildFile()

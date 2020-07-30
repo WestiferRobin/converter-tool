@@ -49,14 +49,15 @@ namespace ConverterTool.LanguageRules
         {
             var classObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
 
-            if (this.TokenList[index].ToLower() != "namespace")
+            if (this.TokenList[index++].ToLower() != "namespace")
                 throw new Exception("This is not an accurate namespace.");
-            index++;
-            index++;    // TODO: Do this for the make file bullshit
 
-            if (this.TokenList[index] != "{")
+            // TODO: When doing multifiles conversions PLEASE! add this back in.
+            //classObject.VariableName = this.TokenList[index++];
+            index++;    // for now just ignore the name.
+
+            if (this.TokenList[index++] != "{")
                 throw new Exception("This is an invalid class opener.");
-            index++;
 
             if (this.TokenList[index].ToLower() == "public" ||
             this.TokenList[index].ToLower() == "private" ||
@@ -79,28 +80,145 @@ namespace ConverterTool.LanguageRules
                 classObject.Value.Add(new WrapperBool("IS_STATIC", false));
             }
 
-            if (this.TokenList[index].ToLower() != "class")
+            if (this.TokenList[index++].ToLower() != "class")
                 throw new Exception("This is not an accurate class.");
-            index++;
 
-            classObject.VariableName = this.TokenList[index++];
+            classObject.WrapperName = this.TokenList[index++];
 
-            if (this.TokenList[index] != "{")
+            if (this.TokenList[index++] != "{")
                 throw new Exception("This is an invalid class opener.");
-            index++;
 
-            for (; index < this.TokenList.Count - 2; index++) ;
+            index = BuildClassContent(index, classObject);
 
-            if (this.TokenList[index] != "}")
+            if (this.TokenList[index++] != "}")
                 throw new Exception("This is an invalid class opener.");
-            index++;
 
-            if (this.TokenList[index] != "}")
+            if (this.TokenList[index++] != "}")
                 throw new Exception("This is an invalid class opener.");
-            index++;
 
             this.Structure.Add(classObject);
             return index;
+        }
+
+        private int BuildClassContent(int index, WrapperObject classObject)
+        {
+            while (index < this.TokenList.Count - 2)
+            {
+                WrapperObject contentObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
+                if (this.TokenList[index].ToLower() == "public" ||
+                this.TokenList[index].ToLower() == "private" ||
+                this.TokenList[index].ToLower() == "protected")
+                {
+                    contentObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
+                }
+                else
+                {
+                    throw new Exception("This is an invalid function or variable opener.");
+                }
+
+                if (this.TokenList[index].ToLower() == "static")
+                {
+                    contentObject.Value.Add(new WrapperBool("IS_STATIC", true));
+                    index++;
+                }
+                else
+                {
+                    contentObject.Value.Add(new WrapperBool("IS_STATIC", false));
+                }
+
+                if (this.IsValidType(index))
+                {
+                    contentObject.Value.Add(new WrapperString("RETURN_TYPE", this.TokenList[index++].ToLower()));
+                }
+                else
+                {
+                    throw new Exception("This is an invalid return/set type.");
+                }
+
+                if (this.TokenList[index][0] == '_')
+                {
+                    contentObject.WrapperName = this.TokenList[index++];
+                    if (this.TokenList[index++] != ";")
+                        throw new Exception("This needs is a valid \';\'.");
+                }
+                else
+                {
+                    contentObject.WrapperName = this.TokenList[index++];
+                    index = this.BuildFunction(index, contentObject);
+                }
+
+                classObject.Value.Add(contentObject);
+            }
+            
+            return index;
+        }
+
+        private int BuildFunction(int index, WrapperObject functionObject)
+        {
+            if (this.TokenList[index++] != "(")
+                throw new Exception("This needs is a valid \'(\'.");
+            WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
+            int holderValue = 1;
+            while (this.TokenList[index] != ")")
+            {
+                WrapperObject parameter = new WrapperObject($"PARAMETER_{holderValue++}", new List<WrapperType>());
+                if (this.IsValidType(index))
+                {
+                    string valueName = this.TokenList[index++];
+                    if (this.TokenList[index] == "[")
+                    {
+                        valueName += "[]";
+                        index += 2;
+                    }
+                    parameter.Value.Add(new WrapperString("VALUE_TYPE", valueName));
+                    parameter.Value.Add(new WrapperString("PARAM_NAME", this.TokenList[index++]));
+                    if (this.TokenList[index] == ")")
+                    {
+                        parameters.Value.Add(parameter);
+                        break;
+                    }
+                    else if (this.TokenList[index++] != ",")
+                        throw new Exception("This needs is a valid \',\'.");
+                }
+                else
+                {
+                    throw new Exception("This is an invalid parameter type.");
+                }
+                parameters.Value.Add(parameter);
+            }
+            functionObject.Value.Add(parameters);
+            if (this.TokenList[index++] != ")")
+                throw new Exception("This needs is a valid \')\'.");
+            if (this.TokenList[index++] != "{")
+                throw new Exception("This needs is a valid \'(\'.");
+            if (this.TokenList[index++] != "}")
+                throw new Exception("This needs is a valid \'(\'.");
+            return index;
+        }
+
+        private bool IsValidType(int index)
+        {
+            bool isBasicType;
+            switch (this.TokenList[index].ToLower())
+            {
+                case "void":
+                case "char":
+                case "short":
+                case "int":
+                case "long":
+                case "float":
+                case "double":
+                case "signed":
+                case "unsigned":
+                case "string":
+                    isBasicType = true;
+                    break;
+                default:
+                    isBasicType = false;
+                    break;
+            }
+
+            return isBasicType || char.IsUpper(this.TokenList[index][0]);
         }
 
         public override void ParseFile()
@@ -257,6 +375,7 @@ namespace ConverterTool.LanguageRules
 
         protected override void CreateKeywords()
         {
+            // TODO: create this.Keywords to be valid Keywords, Error Keywords, and Warning Keywords.
             this.Keywords = new List<string>()
             {
                 "abstract",
@@ -291,7 +410,7 @@ namespace ConverterTool.LanguageRules
                 "goto",
                 "if",
                 "implicit",
-                "in",
+                //"in",
                 "int",
                 "interface",
                 "internal",

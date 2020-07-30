@@ -6,11 +6,11 @@ namespace ConverterTool.WrapperTypes
 {
     public class WrapperType
     {
-        public string VariableName { get; set; }
+        public string WrapperName { get; set; }
 
         public WrapperType(string name)
         {
-            this.VariableName = name;
+            this.WrapperName = name;
         }
 
     }

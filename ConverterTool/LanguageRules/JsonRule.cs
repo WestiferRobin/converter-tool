@@ -189,10 +189,10 @@ namespace ConverterTool.LanguageRules
                 bool hasNoId = true;
                 foreach (var new_id in actualValue.Value)
                 {
-                    if (new_id.VariableName.ToLower() == "id")
+                    if (new_id.WrapperName.ToLower() == "id")
                     {
                         var tempNode = new_id as WrapperInt;
-                        actualValue.VariableName = tempNode.VariableName + "-" + tempNode.Value;
+                        actualValue.WrapperName = tempNode.WrapperName + "-" + tempNode.Value;
                         hasNoId = false;
                         break;
                     }
@@ -254,8 +254,8 @@ namespace ConverterTool.LanguageRules
 
         private void BuildObject(WrapperObject mainNode, string tabs)
         {
-            if (mainNode.VariableName != string.Empty)
-                this.Results += $"{tabs}\"{mainNode.VariableName}\": {{\n";
+            if (mainNode.WrapperName != string.Empty)
+                this.Results += $"{tabs}\"{mainNode.WrapperName}\": {{\n";
             for (int index = 0; index < mainNode.Value.Count; index++)
             {
                 var node = mainNode.Value[index];
@@ -268,16 +268,16 @@ namespace ConverterTool.LanguageRules
                         BuildObject(wrapperObject, tabs + "\t");
                         break;
                     case WrapperBool wrapperBool:
-                        this.Results += $"{tabs + "\t"}\"{wrapperBool.VariableName}\": {wrapperBool.Value.ToString().ToLower()}";
+                        this.Results += $"{tabs + "\t"}\"{wrapperBool.WrapperName}\": {wrapperBool.Value.ToString().ToLower()}";
                         break;
                     case WrapperDouble wrapperDouble:
-                        this.Results += $"{tabs + "\t"}\"{wrapperDouble.VariableName}\": {wrapperDouble.Value}";
+                        this.Results += $"{tabs + "\t"}\"{wrapperDouble.WrapperName}\": {wrapperDouble.Value}";
                         break;
                     case WrapperInt wrapperInt:
-                        this.Results += $"{tabs + "\t"}\"{wrapperInt.VariableName}\": {wrapperInt.Value}";
+                        this.Results += $"{tabs + "\t"}\"{wrapperInt.WrapperName}\": {wrapperInt.Value}";
                         break;
                     case WrapperString wrapperString:
-                        this.Results += $"{tabs + "\t"}\"{wrapperString.VariableName}\": \"{wrapperString.Value}\"";
+                        this.Results += $"{tabs + "\t"}\"{wrapperString.WrapperName}\": \"{wrapperString.Value}\"";
                         break;
                     default:
                         throw new Exception("This type is invalid for build the file.");
@@ -287,21 +287,21 @@ namespace ConverterTool.LanguageRules
                 else
                     this.Results += "\n";
             }
-            if (mainNode.VariableName != string.Empty)
+            if (mainNode.WrapperName != string.Empty)
                 this.Results += $"{tabs}}}";
         }
 
         private void BuildArray(WrapperArray mainNode, string tabs)
         {
-            if (mainNode.VariableName != string.Empty)
-                this.Results += $"{tabs}\"{mainNode.VariableName}\": [\n";
+            if (mainNode.WrapperName != string.Empty)
+                this.Results += $"{tabs}\"{mainNode.WrapperName}\": [\n";
             for (int index = 0; index < mainNode.Value.Count; index++)
             {
                 var node = mainNode.Value[index];
                 switch (node)
                 {
                     case WrapperObject wrapperObject:
-                        wrapperObject.VariableName = string.Empty;
+                        wrapperObject.WrapperName = string.Empty;
                         this.Results += $"{tabs + "\t"}{{\n";
                         BuildObject(wrapperObject, tabs + "\t");
                         if (index != mainNode.Value.Count - 1)
@@ -313,13 +313,13 @@ namespace ConverterTool.LanguageRules
                         throw new Exception("This type is invalid for build the file.");
                 }
             }
-            if (mainNode.VariableName != string.Empty)
+            if (mainNode.WrapperName != string.Empty)
                 this.Results += $"{tabs}]";
         }
 
         public override void BuildFile()
         {
-            this.Structure[0].VariableName = string.Empty;
+            this.Structure[0].WrapperName = string.Empty;
             switch (this.Structure[0])
             {
                 case WrapperArray wrapperArray:

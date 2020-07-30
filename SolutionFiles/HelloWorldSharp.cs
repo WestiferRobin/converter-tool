@@ -13,7 +13,7 @@ namespace HelloWorldSharp
 
         public static void Main(string[] args)
         {
-            RandomMessage = "This thing is going to be hard"; // or isssss it?!?!?
+            _randomMessage = "This thing is going to be hard"; // or isssss it?!?!?
             PrintMessage(3);    /* this is going to read the message */
             Console.WriteLine(RandomMessage);
             /*

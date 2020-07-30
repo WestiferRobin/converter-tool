@@ -10,4 +10,3 @@ D:\ProgramProjects\ConverterTool\ConverterTool\obj\Debug\netcoreapp3.1\Converter
 D:\ProgramProjects\ConverterTool\ConverterTool\obj\Debug\netcoreapp3.1\ConverterTool.dll
 D:\ProgramProjects\ConverterTool\ConverterTool\obj\Debug\netcoreapp3.1\ConverterTool.pdb
 D:\ProgramProjects\ConverterTool\ConverterTool\obj\Debug\netcoreapp3.1\ConverterTool.genruntimeconfig.cache
-D:\ProgramProjects\ConverterTool\ConverterTool\obj\Debug\netcoreapp3.1\ConverterTool.csprojAssemblyReference.cache

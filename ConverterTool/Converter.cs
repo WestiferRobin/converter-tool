@@ -36,7 +36,7 @@ namespace ConverterTool
             // compare source to target
             if (targetRules.TypeOfLanguage == sourceRules.TypeOfLanguage && targetRules.ProgramTypeLanguage != sourceRules.ProgramTypeLanguage)
             {
-                targetRules.Structure = sourceRules.Structure;
+                targetRules.Structure = sourceRules.Structure;  // TODO: THIS IS GOING TO BE WHERE THE ADAPTER CLASS IS GOING TO BE!!!!!
                 targetRules.BuildFile();
             }
             else

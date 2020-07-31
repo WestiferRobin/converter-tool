@@ -49,19 +49,15 @@ namespace ConverterTool.LanguageRules
         {
             var classObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
 
-            if (this.TokenList[index++].ToLower() != "namespace")
-                throw new Exception("This is not an accurate namespace.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "namespace", "This is not an accurate namespace.");
 
             // TODO: When doing multifiles conversions PLEASE! add this back in.
             //classObject.VariableName = this.TokenList[index++];
             index++;    // for now just ignore the name.
 
-            if (this.TokenList[index++] != "{")
-                throw new Exception("This is an invalid class opener.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "{", "This is an invalid class opener.");
 
-            if (this.TokenList[index].ToLower() == "public" ||
-            this.TokenList[index].ToLower() == "private" ||
-            this.TokenList[index].ToLower() == "protected")
+            if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
             {
                 classObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
             }
@@ -80,21 +76,16 @@ namespace ConverterTool.LanguageRules
                 classObject.Value.Add(new WrapperBool("IS_STATIC", false));
             }
 
-            if (this.TokenList[index++].ToLower() != "class")
-                throw new Exception("This is not an accurate class.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "class", "This is not an accurate class.");
 
             classObject.WrapperName = this.TokenList[index++];
 
-            if (this.TokenList[index++] != "{")
-                throw new Exception("This is an invalid class opener.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "{", "This is an invalid class opener.");
 
             index = BuildClassContent(index, classObject);
 
-            if (this.TokenList[index++] != "}")
-                throw new Exception("This is an invalid class opener.");
-
-            if (this.TokenList[index++] != "}")
-                throw new Exception("This is an invalid class opener.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "{", "This is an invalid class closer.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "{", "This is an invalid class closer.");
 
             this.Structure.Add(classObject);
             return index;
@@ -105,9 +96,7 @@ namespace ConverterTool.LanguageRules
             while (index < this.TokenList.Count - 2)
             {
                 WrapperObject contentObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
-                if (this.TokenList[index].ToLower() == "public" ||
-                this.TokenList[index].ToLower() == "private" ||
-                this.TokenList[index].ToLower() == "protected")
+                if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     contentObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
                 }
@@ -126,7 +115,7 @@ namespace ConverterTool.LanguageRules
                     contentObject.Value.Add(new WrapperBool("IS_STATIC", false));
                 }
 
-                if (this.IsValidType(index))
+                if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     contentObject.Value.Add(new WrapperString("RETURN_TYPE", this.TokenList[index++].ToLower()));
                 }
@@ -155,14 +144,14 @@ namespace ConverterTool.LanguageRules
 
         private int BuildFunction(int index, WrapperObject functionObject)
         {
-            if (this.TokenList[index++] != "(")
-                throw new Exception("This needs is a valid \'(\'.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "(", "This needs is a valid \'(\'.");
+
             WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
             int holderValue = 1;
             while (this.TokenList[index] != ")")
             {
                 WrapperObject parameter = new WrapperObject($"PARAMETER_{holderValue++}", new List<WrapperType>());
-                if (this.IsValidType(index))
+                if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     string valueName = this.TokenList[index++];
                     if (this.TokenList[index] == "[")
@@ -177,8 +166,7 @@ namespace ConverterTool.LanguageRules
                         parameters.Value.Add(parameter);
                         break;
                     }
-                    else if (this.TokenList[index++] != ",")
-                        throw new Exception("This needs is a valid \',\'.");
+                    RulesUtility.ValidateToken(this.TokenList[index++], ",", "This needs is a valid \',\'.");
                 }
                 else
                 {
@@ -187,38 +175,12 @@ namespace ConverterTool.LanguageRules
                 parameters.Value.Add(parameter);
             }
             functionObject.Value.Add(parameters);
-            if (this.TokenList[index++] != ")")
-                throw new Exception("This needs is a valid \')\'.");
-            if (this.TokenList[index++] != "{")
-                throw new Exception("This needs is a valid \'(\'.");
-            if (this.TokenList[index++] != "}")
-                throw new Exception("This needs is a valid \'(\'.");
+
+            RulesUtility.ValidateToken(this.TokenList[index++], ")", "This needs is a valid \')\'.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "{", "This needs is a valid \'{\'.");
+            RulesUtility.ValidateToken(this.TokenList[index++], "}", "This needs is a valid \'}\'.");
+
             return index;
-        }
-
-        private bool IsValidType(int index)
-        {
-            bool isBasicType;
-            switch (this.TokenList[index].ToLower())
-            {
-                case "void":
-                case "char":
-                case "short":
-                case "int":
-                case "long":
-                case "float":
-                case "double":
-                case "signed":
-                case "unsigned":
-                case "string":
-                    isBasicType = true;
-                    break;
-                default:
-                    isBasicType = false;
-                    break;
-            }
-
-            return isBasicType || char.IsUpper(this.TokenList[index][0]);
         }
 
         public override void ParseFile()
@@ -291,7 +253,7 @@ namespace ConverterTool.LanguageRules
                     }
                     continue;
                 }
-                else if (this.ValidSymbol(fileContents[index]))
+                else if (RulesUtility.ValidSymbol(this.ProgramTypeLanguage, fileContents[index]))
                 {
                     if (fileContents[index] == '\"')
                     {
@@ -336,41 +298,6 @@ namespace ConverterTool.LanguageRules
                 }
             }
             Log.Success("Scanning Csharp file is Completed.");
-        }
-
-        private bool ValidSymbol(char symbol)
-        {
-            switch (symbol)
-            {
-                case '{':
-                case '}':
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '-':
-                case '+':
-                case '%':
-                case '^':
-                case '*':
-                case '\\':
-                case '\"':
-                case '\'':
-                case '<':
-                case '>':
-                case '&':
-                case '|':
-                case '!':
-                case '@':
-                case '=':
-                case ':':
-                case '?':
-                case ',':
-                case '.':
-                    return true;
-                default:
-                    return false;
-            }
         }
 
         protected override void CreateKeywords()

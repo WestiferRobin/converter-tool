@@ -1,0 +1,30 @@
+﻿<Properties StartupConfiguration="{AAE7CA95-2EDE-4307-AB5B-19FAAA4CF789}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/LanguageRules/JavaRule.cs">
+    <Files>
+      <File FileName="ConverterTool/LanguageRules/CsharpRule.cs" Line="287" Column="55" />
+      <File FileName="ConverterTool/LanguageRules/RulesUtility.cs" Line="25" Column="50" />
+      <File FileName="ConverterTool/Program.cs" Line="29" Column="33" />
+      <File FileName="ConverterTool/LanguageRules/JavaRule.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="ConverterTool" expanded="True">
+            <Node name="ConverterTool" expanded="True">
+              <Node name="LanguageRules" expanded="True">
+                <Node name="JavaRule.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.ConverterTool PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>

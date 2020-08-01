@@ -115,30 +115,24 @@ namespace ConverterTool.LanguageRules
                 if (this.TokenList[index].Contains("Array"))
                 {
                     mainNode = new WrapperArray(this.TokenList[index++], null);
-                    if (this.TokenList[index++] != ">")
-                        throw new Exception("Invalid Token. Need first double quote for name of value");
+
+                    RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need first double quote for name of value");
+
                     index = ParseArray(index, mainNode as WrapperArray);
 
-                    if (this.TokenList[index++] != "<")
-                        throw new Exception("Invalid Token. Need \'<\' for name of value");
-                    if (this.TokenList[index++] != $"/{mainNode.WrapperName + "Array"}")
-                        throw new Exception($"Invalid Token. Need closing name {mainNode.WrapperName} for name of value");
-                    if (this.TokenList[index++] != ">")
-                        throw new Exception("Invalid Token. Need \'>\' for name of value");
+                    RulesUtility.ValidateToken(this.TokenList[index++], "<", "Invalid Token. Need \'<\' for name of value");
+                    RulesUtility.ValidateToken(this.TokenList[index++], $"/{mainNode.WrapperName + "Array"}", $"Invalid Token. Need closing name {mainNode.WrapperName} for name of value");
+                    RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need \'>\' for name of value");
                 }
                 else
                 {
                     mainNode = new WrapperObject(this.TokenList[index++], null);
-                    if (this.TokenList[index++] != ">")
-                        throw new Exception("Invalid Token. Need first double quote for name of value");
+                    RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need first double quote for name of value");
                     index = ParseObject(index, mainNode as WrapperObject);
 
-                    if (this.TokenList[index++] != "<")
-                        throw new Exception("Invalid Token. Need \'<\' for name of value");
-                    if (this.TokenList[index++] != $"/{mainNode.WrapperName}")
-                        throw new Exception($"Invalid Token. Need closing name {mainNode.WrapperName} for name of value");
-                    if (this.TokenList[index++] != ">")
-                        throw new Exception("Invalid Token. Need \'>\' for name of value");
+                    RulesUtility.ValidateToken(this.TokenList[index++], "<", "Invalid Token. Need \'<\' for name of value");
+                    RulesUtility.ValidateToken(this.TokenList[index++], $"/{mainNode.WrapperName}", $"Invalid Token. Need closing name {mainNode.WrapperName} for name of value");
+                    RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need \'>\' for name of value");
                 }
             }
             else
@@ -192,21 +186,16 @@ namespace ConverterTool.LanguageRules
                 actualValue = new WrapperString(valueName, this.TokenList[index++]);
             }
 
-            if (this.TokenList[index++] != "<")
-                throw new Exception("Invalid Token. Need \'<\' for name of value");
+            RulesUtility.ValidateToken(this.TokenList[index++], "<", "Invalid Token. Need \'<\' for name of value");
             if (valueName.ToLower().Contains("array"))
             {
-                if (this.TokenList[index].ToLower() != $"/{valueName.ToLower()}")
-                    throw new Exception($"Invalid Token. Need closing name {valueName} for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], $"/{valueName.ToLower()}", $"Invalid Token. Need closing name {valueName} for name of value");
             }
             else
             {
-                if (this.TokenList[index] != $"/{valueName}")
-                    throw new Exception($"Invalid Token. Need closing name {valueName} for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], $"/{valueName}", $"Invalid Token. Need closing name {valueName} for name of value");
             }
-            index++;
-            if (this.TokenList[index++] != ">")
-                throw new Exception("Invalid Token. Need \'>\' for name of value");
+            RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need \'>\' for name of value");
 
             parentNode.Value.Add(actualValue);
             return index;
@@ -214,16 +203,15 @@ namespace ConverterTool.LanguageRules
 
         private int ParseObject(int index, WrapperObject parentNode)
         {
+            // ASDFASDFASDF
             parentNode.Value = new List<WrapperType>();
             while (index < this.TokenList.Count)
             {
-                if (this.TokenList[index++] != "<")
-                    throw new Exception("Invalid Token. Need \'<\' for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], "<", "Invalid Token. Need \'<\' for name of value");
                 if (this.TokenList[index] == $"/{parentNode.WrapperName}")
                     break;
                 string valueName = this.TokenList[index++];
-                if (this.TokenList[index++] != ">")
-                    throw new Exception("Invalid Token. Need \'>\' for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need \'>\' for name of value");
 
                 index = ParseValue(index, valueName, parentNode);
             }
@@ -237,17 +225,14 @@ namespace ConverterTool.LanguageRules
             int id = 0;
             while (index < this.TokenList.Count)
             {
-                if (this.TokenList[index++] != "<")
-                    throw new Exception("Invalid Token. Need \'<\' for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], "<", "Invalid Token. Need \'<\' for name of value");
                 if (this.TokenList[index] == $"/{parentNode.WrapperName}")
                 {
                     parentNode.WrapperName = jsonName;
                     break;
                 }
-                if (this.TokenList[index++] != jsonName)
-                    throw new Exception("Invalid Token. Need \'<\' for name of value");
-                if (this.TokenList[index++] != ">")
-                    throw new Exception("Invalid Token. Need \'>\' for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], jsonName, $"Invalid Token. Need {jsonName} for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need \'>\' for name of value");
 
                 WrapperObject childNode = new WrapperObject(jsonName, null);
                 index = ParseObject(index, childNode);
@@ -255,12 +240,9 @@ namespace ConverterTool.LanguageRules
                 childNode.WrapperName = "ID-" + id++;
                 parentNode.Value.Add(childNode);
 
-                if (this.TokenList[index++] != "<")
-                    throw new Exception("Invalid Token. Need \'<\' for name of value");
-                if (this.TokenList[index++] != $"/{jsonName}")
-                    throw new Exception("Invalid Token. Need \'<\' for name of value");
-                if (this.TokenList[index++] != ">")
-                    throw new Exception("Invalid Token. Need \'>\' for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], "<", "Invalid Token. Need \'<\' for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], $"/{jsonName}", "Invalid Token. Need \'<\' for name of value");
+                RulesUtility.ValidateToken(this.TokenList[index++], ">", "Invalid Token. Need \'>\' for name of value");
             }
             return index - 1;
         }

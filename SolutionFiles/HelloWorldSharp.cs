@@ -24,44 +24,44 @@ namespace HelloWorldSharp
             fdsa
             asdf
             */
-            var asdf = new Values(123);
+            Values asdf = new Values(123);
             Console.WriteLine(asdf.Value);
         }
 
         public static string GetRandomMessage()
         {
-            return _randomMessage;
+            // return _randomMessage;
         }
         public static void SetRandomMessage(String value)
         {
-            _randomMessage = value;
+            // _randomMessage = value;
         }
 
         public static void PrintMessage(int size)
         {
-            for (int i = 0; i < size; i++)
-            {
-                string message = "Hello, World ";
-                message += GetNumber();
-                Console.WriteLine(message);
-            }
-            printWes(size % 2);
-            Console.WriteLine("Encore! E value is " + Math.E);
+            // for (int i = 0; i < size; i++)
+            // {
+            //     string message = "Hello, World ";
+            //     message += GetNumber();
+            //     Console.WriteLine(message);
+            // }
+            // printWes(size % 2);
+            // Console.WriteLine("Encore! E value is " + Math.E);
         }
 
         public static string GetNumber()
         {
-            Random rand = new Random();
-            return rand.Next().ToString();
+            // Random rand = new Random();
+            // return rand.Next().ToString();
         }
 
         private static void printWes(int times)
         {
-            while (times >= 0)
-            {
-                Console.WriteLine("Wesley Webb");
-                times--;
-            }
+            // while (times >= 0)
+            // {
+            //     Console.WriteLine("Wesley Webb");
+            //     times--;
+            // }
         }
     }
 }

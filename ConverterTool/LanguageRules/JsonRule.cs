@@ -50,14 +50,14 @@ namespace ConverterTool.LanguageRules
                     else if (fileContents[index] == 't')
                     {
                         foreach (var character in "true")
-                            RulesUtility.ValidateToken(fileContents[index++].ToString(), character.ToString(), "not a valid true boolean.");
+                            index = RulesUtility.ValidateToken(fileContents[index].ToString(), character.ToString(), "not a valid true boolean.", index);
                         this.TokenList.Add("true");
                         index -= 1;
                     }
                     else if (fileContents[index] == 'f')
                     {
                         foreach (var character in "false")
-                            RulesUtility.ValidateToken(fileContents[index++].ToString(), character.ToString(), "not a valid false boolean.");
+                            index = RulesUtility.ValidateToken(fileContents[index].ToString(), character.ToString(), "not a valid false boolean.", index);
                         this.TokenList.Add("false");
                         index -= 1;
                     }
@@ -113,11 +113,11 @@ namespace ConverterTool.LanguageRules
 
             if (this.TokenList[index].Contains("\""))
             {
-                RulesUtility.ValidateToken(this.TokenList[index++], "\"", "Invalid Token. Need first double quote for string value");
+                index = RulesUtility.ValidateToken(this.TokenList[index], "\"", "Invalid Token. Need first double quote for string value", index);
 
                 actualValue = new WrapperString(valueName, this.TokenList[index++]);
 
-                RulesUtility.ValidateToken(this.TokenList[index++], "\"", "Invalid Token. Need first double quote for string value");
+                index = RulesUtility.ValidateToken(this.TokenList[index], "\"", "Invalid Token. Need first double quote for string value", index);
             }
             else if (this.TokenList[index].Contains("."))
             {
@@ -165,7 +165,7 @@ namespace ConverterTool.LanguageRules
             int id = 0;
             while (this.TokenList[index] != "]")
             {
-                RulesUtility.ValidateToken(this.TokenList[index++], "{", "Need object for arrays");
+                index = RulesUtility.ValidateToken(this.TokenList[index], "{", "Need object for arrays", index);
 
                 var actualValue = new WrapperObject(string.Format("ID-", id++), null);
                 index = ParseObject(index, actualValue);
@@ -211,12 +211,12 @@ namespace ConverterTool.LanguageRules
             {
                 string valueName = string.Empty;
 
-                RulesUtility.ValidateToken(this.TokenList[index++], "\"", "Invalid Token. Need first double quote for string value");
+                index = RulesUtility.ValidateToken(this.TokenList[index], "\"", "Invalid Token. Need first double quote for string value", index);
 
                 valueName = this.TokenList[index++];
 
-                RulesUtility.ValidateToken(this.TokenList[index++], "\"", "Invalid Token. Need first double quote for string value");
-                RulesUtility.ValidateToken(this.TokenList[index++], ":", "Invalid Token. Need \":\" for divider of value");
+                index = RulesUtility.ValidateToken(this.TokenList[index], "\"", "Invalid Token. Need first double quote for string value", index);
+                index = RulesUtility.ValidateToken(this.TokenList[index], ":", "Invalid Token. Need \":\" for divider of value", index);
 
                 index = ParseValue(index, valueName, parentNode);
                 

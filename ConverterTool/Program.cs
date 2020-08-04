@@ -6,7 +6,11 @@ namespace ConverterTool
 {
     internal class Program
     {
-        private const string FILE_PATH = @"D:\ProgramProjects\ConverterTool\SolutionFiles\";
+        // THIS IS FOR WINDOWS!
+        //private const string FILE_PATH = @"D:\ProgramProjects\ConverterTool\SolutionFiles\";
+
+        // THIS IS FOR MAC/LINUX!
+        private const string FILE_PATH = @"/Users/wesitferrobin/Projects/workspace/Convertertool/SolutionFiles/";
         public static void Main(string[] args)
         {
             try
@@ -15,7 +19,7 @@ namespace ConverterTool
                 string targetFile = string.Empty;
 
                 // this temp location is for automation testing.
-                if (false)
+                if (true)
                 {
                     for (int flag = 1; flag <= 4; flag++)
                     {

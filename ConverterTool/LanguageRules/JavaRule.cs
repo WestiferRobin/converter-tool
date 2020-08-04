@@ -64,15 +64,15 @@ namespace ConverterTool.LanguageRules
 
             classObject.Value.Add(new WrapperBool("IS_STATIC", this.TokenList[index].Contains("static")));
 
-            RulesUtility.ValidateToken(this.TokenList[index++], "class", "This is not an accurate class.");
+            index = RulesUtility.ValidateToken(this.TokenList[index], "class", "This is not an accurate class.", index);
 
             classObject.WrapperName = this.TokenList[index++];
 
-            RulesUtility.ValidateToken(this.TokenList[index++], "{", "This is an invalid class opener.");
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
 
             index = BuildClassContent(index, classObject);
 
-            RulesUtility.ValidateToken(this.TokenList[index++], "}", "This is an invalid class closer.");
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This is an invalid class closer.", index);
 
             this.Structure.Add(classObject);
             return index;
@@ -114,7 +114,7 @@ namespace ConverterTool.LanguageRules
                 if (this.TokenList[index][0] == '_')
                 {
                     contentObject.WrapperName = this.TokenList[index++];
-                    RulesUtility.ValidateToken(this.TokenList[index++], ";", "This needs is a valid \';\'.");
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace ConverterTool.LanguageRules
 
         private int BuildFunction(int index, WrapperObject functionObject)
         {
-            RulesUtility.ValidateToken(this.TokenList[index++], "(", "This needs is a valid \'(\'.");
+            index = RulesUtility.ValidateToken(this.TokenList[index], "(", "This needs is a valid \'(\'.", index);
 
             WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
             int holderValue = 1;
@@ -152,7 +152,7 @@ namespace ConverterTool.LanguageRules
                         parameters.Value.Add(parameter);
                         break;
                     }
-                    RulesUtility.ValidateToken(this.TokenList[index++], ",", "This needs is a valid \',\'.");
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ",", "This needs is a valid \',\'.", index);
                 }
                 else
                 {
@@ -162,9 +162,9 @@ namespace ConverterTool.LanguageRules
             }
             functionObject.Value.Add(parameters);
 
-            RulesUtility.ValidateToken(this.TokenList[index++], ")", "This needs is a valid \')\'.");
-            RulesUtility.ValidateToken(this.TokenList[index++], "{", "This needs is a valid \'{\'.");
-            RulesUtility.ValidateToken(this.TokenList[index++], "}", "This needs is a valid \'}\'.");
+            index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
 
             return index;
         }

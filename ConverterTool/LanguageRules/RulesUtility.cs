@@ -3,10 +3,11 @@ namespace ConverterTool.LanguageRules
 {
     public static class RulesUtility
     {
-        public static void ValidateToken(string source, string target, string errorMsg)
+        public static int ValidateToken(string source, string target, string errorMsg, int index)
         {
             if (source.ToLower() != target.ToLower())
-                throw new Exception("This is not an accurate namespace.");
+                throw new Exception($"This is not an accurate {target}.");
+            return ++index;
         }
 
         public static bool ValidAccessModifiers(ProgramType programType, string target)

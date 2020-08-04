@@ -19,7 +19,7 @@ namespace ConverterTool
                 string targetFile = string.Empty;
 
                 // this temp location is for automation testing.
-                if (true)
+                if (false)
                 {
                     for (int flag = 1; flag <= 4; flag++)
                     {

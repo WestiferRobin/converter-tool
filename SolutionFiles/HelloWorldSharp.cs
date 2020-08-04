@@ -13,7 +13,7 @@ namespace HelloWorldSharp
 
         public static void Main(string[] args)
         {
-            _randomMessage = "This thing is going to be hard"; // or isssss it?!?!?
+            this._randomMessage = "This thing is going to be hard"; // or isssss it?!?!?
             PrintMessage(3);    /* this is going to read the message */
             Console.WriteLine(RandomMessage);
             /*
@@ -30,38 +30,38 @@ namespace HelloWorldSharp
 
         public static string GetRandomMessage()
         {
-            // return _randomMessage;
+            return this._randomMessage;
         }
-        public static void SetRandomMessage(String value)
+        public static void SetRandomMessage(string value)
         {
-            // _randomMessage = value;
+            this._randomMessage = value;
         }
 
         public static void PrintMessage(int size)
         {
-            // for (int i = 0; i < size; i++)
-            // {
-            //     string message = "Hello, World ";
-            //     message += GetNumber();
-            //     Console.WriteLine(message);
-            // }
-            // printWes(size % 2);
-            // Console.WriteLine("Encore! E value is " + Math.E);
+            for (int i = 0; i < size; i++)
+            {
+                string message = "Hello, World ";
+                message += GetNumber();
+                Console.WriteLine(message);
+            }
+            printWes(size % 2);
+            Console.WriteLine("Encore! E value is " + Math.E);
         }
 
         public static string GetNumber()
         {
-            // Random rand = new Random();
-            // return rand.Next().ToString();
+            Random rand = new Random();
+            return rand.Next().ToString();
         }
 
         private static void printWes(int times)
         {
-            // while (times >= 0)
-            // {
-            //     Console.WriteLine("Wesley Webb");
-            //     times--;
-            // }
+            while (times >= 0)
+            {
+                Console.WriteLine("Wesley Webb");
+                times--;
+            }
         }
     }
 }

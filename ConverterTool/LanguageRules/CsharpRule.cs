@@ -127,8 +127,7 @@ namespace ConverterTool.LanguageRules
                 if (this.TokenList[index][0] == '_')
                 {
                     contentObject.WrapperName = this.TokenList[index++];
-                    if (this.TokenList[index++] != ";")
-                        throw new Exception("This needs is a valid \';\'.");
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
                 }
                 else
                 {
@@ -178,8 +177,93 @@ namespace ConverterTool.LanguageRules
 
             index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+            WrapperObject functionContent = new WrapperObject("FUNCTION_CONTENT", new List<WrapperType>());
+
+            index = this.FillFunctionContent(index, functionContent);
+
+            functionObject.Value.Add(functionContent);
             index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
 
+            return index;
+        }
+
+        private int FillFunctionContent(int index, WrapperObject functionContent)
+        {
+            int counter = 1;
+            int whileLoopCount = 1;
+            int forLoopCount = 1;
+            while (this.TokenList[index] != "}")
+            {
+                var values = string.Empty;
+                if (this.TokenList[index].ToLower() == "for")
+                {
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "for", "This needs is a valid \'for\'.", index);
+                    WrapperObject forObject = new WrapperObject($"FOR_{forLoopCount++}", new List<WrapperType>());
+                    string conditionStatement = string.Empty;
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "(", "This needs is a valid \'(\'.", index);
+                    conditionStatement += "(";
+                    while (this.TokenList[index] != ")")
+                    {
+                        string lookAhead = this.TokenList[index + 1];
+                        values += this.TokenList[index];
+                        if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                            && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                            && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                            values += " ";
+                        index++;
+                    }
+                    conditionStatement += values;
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
+                    conditionStatement += ")";
+                    forObject.Value.Add(new WrapperString("CONDITION_STATEMENT", conditionStatement));
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+                    index = this.FillFunctionContent(index, forObject);
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+                    functionContent.Value.Add(forObject);
+                }
+                else if (this.TokenList[index].ToLower() == "while")
+                {
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "while", "This needs is a valid \'while\'.", index);
+                    WrapperObject whileObject = new WrapperObject($"WHILE_{whileLoopCount++}", new List<WrapperType>());
+                    string conditionStatement = string.Empty;
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "(", "This needs is a valid \'(\'.", index);
+                    conditionStatement += "(";
+                    while (this.TokenList[index] != ")")
+                    {
+                        string lookAhead = this.TokenList[index + 1];
+                        values += this.TokenList[index];
+                        if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                            && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                            && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                            values += " ";
+                        index++;
+                    }
+                    conditionStatement += values;
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
+                    conditionStatement += ")";
+                    whileObject.Value.Add(new WrapperString("CONDITION_STATEMENT", conditionStatement));
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+                    index = this.FillFunctionContent(index, whileObject);
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+                    functionContent.Value.Add(whileObject);
+                }
+                else
+                {
+                    while (this.TokenList[index] != ";")
+                    {
+                        string lookAhead = this.TokenList[index + 1];
+                        values += this.TokenList[index];
+                        if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                            && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                            && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                            values += " ";
+                        index++;
+                    }
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                    values += ";";
+                    functionContent.Value.Add(new WrapperString($"STATEMENT_{counter++}", values));
+                }
+            }
             return index;
         }
 
@@ -280,7 +364,6 @@ namespace ConverterTool.LanguageRules
                     if (!string.IsNullOrEmpty(hold) && !string.IsNullOrWhiteSpace(hold))
                     {
                         this.TokenList.Add(hold);
-                        hold = string.Empty;
                     }
                     this.TokenList.Add(fileContents[index].ToString());
                     hold = string.Empty;
@@ -306,7 +389,7 @@ namespace ConverterTool.LanguageRules
             this.Keywords = new List<string>()
             {
                 "abstract",
-                "as",
+                //"as",
                 "base",
                 "bool",
                 "break",

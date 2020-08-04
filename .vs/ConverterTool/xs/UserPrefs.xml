@@ -1,20 +1,19 @@
 ﻿<Properties StartupConfiguration="{AAE7CA95-2EDE-4307-AB5B-19FAAA4CF789}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/LanguageRules/CsharpRule.cs">
     <Files>
       <File FileName="ConverterTool/LanguageRules/RulesUtility.cs" Line="21" Column="25" />
-      <File FileName="ConverterTool/LanguageRules/XmlRule.cs" Line="247" Column="30" />
-      <File FileName="ConverterTool/Program.cs" Line="63" Column="1" />
+      <File FileName="ConverterTool/Program.cs" Line="23" Column="18" />
       <File FileName="ConverterTool/LanguageRules/CsharpRule.cs" Line="92" Column="10" />
-      <File FileName="ConverterTool/LanguageRules/JavaRule.cs" Line="167" Column="113" />
-      <File FileName="ConverterTool/LanguageRules/JsonRule.cs" Line="219" Column="135" />
+      <File FileName="ConverterTool/LanguageRules/JavaRule.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="ConverterTool" expanded="True">
             <Node name="ConverterTool" expanded="True">
-              <Node name="LanguageRules" expanded="True" />
-              <Node name="Program.cs" selected="True" />
+              <Node name="LanguageRules" expanded="True">
+                <Node name="CsharpRule.cs" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>

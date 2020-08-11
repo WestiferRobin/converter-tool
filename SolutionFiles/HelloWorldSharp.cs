@@ -10,7 +10,10 @@ namespace HelloWorldSharp
     {
         // this is going to be a problem...
         private static string _randomMessage;
+        // private static int _randomNumber = 234;
 
+        // private static const int CONSTANT_INT = 234;
+        
         public static void Main(string[] args)
         {
             this._randomMessage = "This thing is going to be hard"; // or isssss it?!?!?

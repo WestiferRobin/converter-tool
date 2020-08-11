@@ -8,9 +8,12 @@ namespace ConverterTool.LanguageRules
 {
     internal class CsharpRule : LanguageRule
     {
+        private readonly List<string> _autoPropertyList; 
+
         public CsharpRule(string filename) : base(LanguageType.PROGRAM_LANG, ProgramType.C_SHARP, filename)
         {
             this.CreateKeywords();
+            this._autoPropertyList = new List<string>();
         }
 
         public override void BuildFile()
@@ -47,7 +50,7 @@ namespace ConverterTool.LanguageRules
 
         private int AddClass(int index)
         {
-            var classObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
+            var classObject = new WrapperObject(string.Empty, new List<WrapperType>());
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "namespace", "This is not an accurate namespace.", index);
 
@@ -81,7 +84,10 @@ namespace ConverterTool.LanguageRules
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "class", "This is not an accurate class.", index);
 
-            classObject.WrapperName = this.TokenList[index++];
+            while (this.TokenList[index] != "{")
+            {
+                classObject.WrapperName += this.TokenList[index++];
+            }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
 
@@ -118,23 +124,36 @@ namespace ConverterTool.LanguageRules
                     contentObject.Value.Add(new WrapperBool("IS_STATIC", false));
                 }
 
-                if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
+                // Need to take into account for this being a constructor or a return type.
+                if (this.TokenList[index + 1] != "(")
                 {
-                    contentObject.Value.Add(new WrapperString("RETURN_TYPE", this.TokenList[index++].ToLower()));
-                }
-                else
-                {
-                    throw new Exception("This is an invalid return/set type.");
+                    if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
+                    {
+                        string valueType = this.TokenList[index++];
+                        if (this.TokenList[index] == "<")
+                        {
+                            while(this.TokenList[index] != ">")
+                            {
+                                valueType += this.TokenList[index++];
+                            }
+                            valueType += this.TokenList[index++];
+                        }
+                        contentObject.Value.Add(new WrapperString("VALUE_TYPE", valueType));
+                    }
+                    else
+                    {
+                        throw new Exception("This is an invalid return/set type.");
+                    }
                 }
 
                 if (this.TokenList[index][0] == '_')
                 {
                     contentObject.WrapperName = this.TokenList[index++];
-                    // TODO: Fix the value shit
-                    index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                    index = this.BuildClassProperty(index, contentObject);
                 }
                 else
                 {
+                    var asdf = this.TokenList[index];
                     contentObject.WrapperName = this.TokenList[index++];
                     if (this.TokenList[index] == "(")
                     {
@@ -142,7 +161,8 @@ namespace ConverterTool.LanguageRules
                     }
                     else if (this.TokenList[index] == "{")
                     {
-                        index = this.BuildAutoProperty(index, contentObject);
+                        index = this.BuildAutoProperty(index, contentObject, classObject);
+                        continue;
                     }
                     else
                     {
@@ -156,33 +176,89 @@ namespace ConverterTool.LanguageRules
             return index;
         }
 
-        private int BuildSetMethod(int index)
+        private int BuildClassProperty(int index, WrapperObject contentObject)
         {
-            index = RulesUtility.ValidateToken(this.TokenList[index], "set", "This needs is a valid \'set\'.", index);
+
             index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
             return index;
         }
 
-        private int BuildGetMethod(int index)
+        private int BuildAuxMethod(int index, WrapperObject auxObject, string variableName)
         {
-            index = RulesUtility.ValidateToken(this.TokenList[index], "get", "This needs is a valid \'get\'.", index);
-            index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+            string flagName = auxObject.WrapperName.ToString().ToLower();
+            index = RulesUtility.ValidateToken(this.TokenList[index], flagName,
+                $"This needs is a valid \'{flagName}\'.", index);
+            WrapperObject functionContent = new WrapperObject("FUNCTION_CONTENT", new List<WrapperType>());
+
+            if (this.TokenList[index] == ";")
+            {
+                index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                if (flagName == "get")
+                {
+                    functionContent.Value.Add(new WrapperString("STATEMENT_1", $"return {variableName}"));
+                }
+                else if (flagName == "set")
+                {
+                    functionContent.Value.Add(new WrapperString("STATEMENT_1", $"this.{variableName} = value"));
+                }
+                else
+                {
+                    throw new Exception($"This flag name {flagName} is not valid for autoproperty getter/setter");
+                }
+            }
+            else if (this.TokenList[index] == "{")
+            {
+                index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+
+                index = this.FillFunctionContent(index, functionContent);
+
+                index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+            }
+            else
+            {
+                throw new Exception("This is not a valid set function of this auto property.");
+            }
+            auxObject.Value.Add(functionContent);
+
             return index;
         }
 
-        private int BuildAutoProperty(int index, WrapperObject contentObject)
+        private int BuildAutoProperty(int index, WrapperObject contentObject, WrapperObject parentObject)
         {
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+            WrapperObject setObject = new WrapperObject("SET", new List<WrapperType>());
+            WrapperObject getObject = new WrapperObject("GET", new List<WrapperType>());
+
+            contentObject.CopyData(getObject);
+            contentObject.CopyData(setObject);
+
+            string compVariableName = "_" + char.ToLower(contentObject.WrapperName[0]).ToString() + contentObject.WrapperName.Substring(1);
+            string holdOlderName = contentObject.WrapperName;
+            if (!parentObject.GetKeys().Contains(compVariableName))
+            {
+                contentObject.WrapperName = compVariableName;
+                contentObject.UpdateStringValue("ACCESS_MOD", "private");
+                parentObject.Value.Add(contentObject);
+            }
+
+            WrapperString valueType = setObject.GetValue("VALUE_TYPE") as WrapperString;
+            WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
+            WrapperObject parameter = new WrapperObject($"PARAMETER_1", new List<WrapperType>());
+            parameter.Value.Add(new WrapperString("VALUE_TYPE", valueType.Value));
+            parameter.Value.Add(new WrapperString("PARAM_NAME", "value"));
+            setObject.UpdateStringValue("VALUE_TYPE", "void");
+            parameters.Value.Add(parameter);
+            setObject.Value.Add(parameters);
 
             if (this.TokenList[index] == "get")
             {
-                index = this.BuildGetMethod(index);
-                index = this.BuildSetMethod(index);
+                index = this.BuildAuxMethod(index, getObject, compVariableName);
+                index = this.BuildAuxMethod(index, setObject, compVariableName);
             }
             else if (this.TokenList[index] == "set")
             {
-                index = this.BuildSetMethod(index);
-                index = this.BuildGetMethod(index);
+                index = this.BuildAuxMethod(index, setObject, compVariableName);
+                index = this.BuildAuxMethod(index, getObject, compVariableName);
             }
             else
             {
@@ -190,6 +266,13 @@ namespace ConverterTool.LanguageRules
             }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+            getObject.WrapperName = $"Get{holdOlderName}";
+            setObject.WrapperName = $"Set{holdOlderName}";
+            parentObject.Value.Add(getObject);
+            parentObject.Value.Add(setObject);
+            this._autoPropertyList.Add(holdOlderName);
+            this._autoPropertyList.Add($"this.{holdOlderName}");
+
             return index;
         }
 
@@ -225,7 +308,8 @@ namespace ConverterTool.LanguageRules
                 }
                 parameters.Value.Add(parameter);
             }
-            functionObject.Value.Add(parameters);
+            if (parameters.Value.Count > 0)
+                functionObject.Value.Add(parameters);
 
             index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
@@ -342,11 +426,46 @@ namespace ConverterTool.LanguageRules
                         index++;
                     }
                     index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                    values = this.CleanStatement(values);
                     values += ";";
                     functionContent.Value.Add(new WrapperString($"STATEMENT_{counter++}", values));
                 }
             }
             return index;
+        }
+
+        private string CleanStatement(string values)
+        {
+            string[] splitAssignment = values.Split('=');
+            string assignValue = string.Empty;
+
+            if (splitAssignment.Length > 2)
+            {
+                throw new Exception($"Clean Statement didn't work for line {values}");
+            }
+            else if (splitAssignment.Length == 2)
+            {
+                foreach (var autoProp in this._autoPropertyList)
+                {
+                    if (splitAssignment[1].Contains(autoProp) && !autoProp.Contains(".this"))
+                    {
+                        string result = autoProp.Replace("this.", string.Empty);
+                        splitAssignment[1] = splitAssignment[1].Replace($"this.{autoProp}", $"this.Get{result}()");
+                    }
+                }
+                assignValue = splitAssignment[1];
+                if (this._autoPropertyList.Contains(splitAssignment[0].Replace(" ", string.Empty)))
+                {
+                    string result = splitAssignment[0].Replace("this.", string.Empty);
+                    values = $"this.Set{result}({assignValue})";
+                }
+                else
+                {
+                    values = $"{splitAssignment[0]} = {assignValue}";
+                }
+            }
+
+            return values;
         }
 
         public override void ParseFile()
@@ -355,14 +474,8 @@ namespace ConverterTool.LanguageRules
             int index = 0;
             index = this.AddHeader(index);
             _ = this.AddClass(index);
-            this.ConvertAutoProperties();
             Log.Success("Parsing Csharp is Completed.");
             var asdf = this.Structure;
-        }
-
-        private void ConvertAutoProperties()
-        {
-
         }
 
         private string CleanSourceCode()

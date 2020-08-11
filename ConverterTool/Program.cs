@@ -7,7 +7,7 @@ namespace ConverterTool
     internal class Program
     {
         // THIS IS FOR WINDOWS!
-        private const string FILE_PATH = @"D:\ProgramProjects\Convertertool\SolutionFiles\";
+        //private const string FILE_PATH = @"D:\ProgramProjects\Convertertool\SolutionFiles\";
 
         // THIS IS FOR MAC/LINUX!
         private const string FILE_PATH = @"/Users/wesitferrobin/Projects/workspace/Convertertool/SolutionFiles/";
@@ -54,7 +54,8 @@ namespace ConverterTool
                 }
                 else
                 {
-                    sourceFile = string.Concat(FILE_PATH, "Value.cs");//"HelloWorldSharp.cs");
+                    bool shouldUseMain = true;
+                    sourceFile = string.Concat(FILE_PATH, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
                     targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
                     //sourceFile = string.Concat(FILE_PATH, "HelloWorldJ.java");
                     //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");

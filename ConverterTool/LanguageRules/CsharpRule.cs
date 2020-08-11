@@ -358,7 +358,7 @@ namespace ConverterTool.LanguageRules
             Log.Info("Scanning Csharp file.");
             for (int index = 0; index < fileContents.Length; index++)
             {
-                if (fileContents[index] == ' ') //|| fileContents[index] == '\n' || fileContents[index] == '\r')
+                if (fileContents[index] == ' ')
                 {
                     if (!string.IsNullOrEmpty(hold) && !string.IsNullOrWhiteSpace(hold))
                     {

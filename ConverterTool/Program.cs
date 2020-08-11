@@ -10,7 +10,7 @@ namespace ConverterTool
         private const string FILE_PATH = @"D:\ProgramProjects\Convertertool\SolutionFiles\";
 
         // THIS IS FOR MAC/LINUX!
-        //private const string FILE_PATH = @"/Users/wesitferrobin/Projects/workspace/Convertertool/SolutionFiles/";
+        private const string FILE_PATH = @"/Users/wesitferrobin/Projects/workspace/Convertertool/SolutionFiles/";
         public static void Main(string[] args)
         {
             try
@@ -19,7 +19,7 @@ namespace ConverterTool
                 string targetFile = string.Empty;
 
                 // this temp location is for automation testing.
-                if (true)
+                if (false)
                 {
                     for (int flag = 1; flag <= 4; flag++)
                     {
@@ -54,10 +54,10 @@ namespace ConverterTool
                 }
                 else
                 {
-                    //sourceFile = string.Concat(FILE_PATH, "HelloWorldSharp.cs");
-                    //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
-                    sourceFile = string.Concat(FILE_PATH, "HelloWorldJ.java");
-                    targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
+                    sourceFile = string.Concat(FILE_PATH, "Value.cs");//"HelloWorldSharp.cs");
+                    targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
+                    //sourceFile = string.Concat(FILE_PATH, "HelloWorldJ.java");
+                    //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
 
                     Log.Info("Conversion Tool is now running.");
 

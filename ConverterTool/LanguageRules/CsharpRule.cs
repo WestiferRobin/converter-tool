@@ -53,7 +53,10 @@ namespace ConverterTool.LanguageRules
 
             // TODO: When doing multifiles conversions PLEASE! add this back in.
             //classObject.VariableName = this.TokenList[index++];
-            index++;    // for now just ignore the name.
+            while (this.TokenList[index] != "{")
+            {
+                index++;    // for now just ignore the name.
+            }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
 
@@ -127,17 +130,66 @@ namespace ConverterTool.LanguageRules
                 if (this.TokenList[index][0] == '_')
                 {
                     contentObject.WrapperName = this.TokenList[index++];
+                    // TODO: Fix the value shit
                     index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
                 }
                 else
                 {
                     contentObject.WrapperName = this.TokenList[index++];
-                    index = this.BuildFunction(index, contentObject);
+                    if (this.TokenList[index] == "(")
+                    {
+                        index = this.BuildFunction(index, contentObject);
+                    }
+                    else if (this.TokenList[index] == "{")
+                    {
+                        index = this.BuildAutoProperty(index, contentObject);
+                    }
+                    else
+                    {
+                        throw new Exception("This is not a function or an auto property.");
+                    }
                 }
 
                 classObject.Value.Add(contentObject);
             }
             
+            return index;
+        }
+
+        private int BuildSetMethod(int index)
+        {
+            index = RulesUtility.ValidateToken(this.TokenList[index], "set", "This needs is a valid \'set\'.", index);
+            index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+            return index;
+        }
+
+        private int BuildGetMethod(int index)
+        {
+            index = RulesUtility.ValidateToken(this.TokenList[index], "get", "This needs is a valid \'get\'.", index);
+            index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+            return index;
+        }
+
+        private int BuildAutoProperty(int index, WrapperObject contentObject)
+        {
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+
+            if (this.TokenList[index] == "get")
+            {
+                index = this.BuildGetMethod(index);
+                index = this.BuildSetMethod(index);
+            }
+            else if (this.TokenList[index] == "set")
+            {
+                index = this.BuildSetMethod(index);
+                index = this.BuildGetMethod(index);
+            }
+            else
+            {
+                throw new Exception("This auto property needs an explicet get and set keywords.");
+            }
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
             return index;
         }
 
@@ -303,7 +355,14 @@ namespace ConverterTool.LanguageRules
             int index = 0;
             index = this.AddHeader(index);
             _ = this.AddClass(index);
+            this.ConvertAutoProperties();
             Log.Success("Parsing Csharp is Completed.");
+            var asdf = this.Structure;
+        }
+
+        private void ConvertAutoProperties()
+        {
+
         }
 
         private string CleanSourceCode()

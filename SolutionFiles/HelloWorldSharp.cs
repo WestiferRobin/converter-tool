@@ -25,6 +25,7 @@ namespace HelloWorldSharp
             asdf
             */
             Values asdf = new Values(123);
+            asdf.Value2 = "asdf";
             Console.WriteLine(asdf.Value);
         }
 

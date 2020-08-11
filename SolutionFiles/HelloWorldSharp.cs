@@ -45,8 +45,19 @@ namespace HelloWorldSharp
                 message += GetNumber();
                 Console.WriteLine(message);
             }
-            printWes(size % 2);
-            Console.WriteLine("Encore! E value is " + Math.E);
+
+            if (size >= 10)
+            {
+                printWes(size % 2);
+            }
+            else if (size <= 3 && size < 10)
+            {
+                printWes(size);
+            }
+            else
+            {
+                Console.WriteLine("Encore! E value is " + Math.E);
+            }
         }
 
         public static string GetNumber()

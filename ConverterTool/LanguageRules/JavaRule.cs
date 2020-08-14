@@ -50,7 +50,7 @@ namespace ConverterTool.LanguageRules
 
         private int AddClass(int index)
         {
-            var classObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
+            var classObject = new WrapperObject(string.Empty, new List<WrapperType>());
 
             if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
             {
@@ -65,7 +65,10 @@ namespace ConverterTool.LanguageRules
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "class", "This is not an accurate class.", index);
 
-            classObject.WrapperName = this.TokenList[index++];
+            while (this.TokenList[index] != "{")
+            {
+                classObject.WrapperName += this.TokenList[index++];
+            }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
 
@@ -81,14 +84,15 @@ namespace ConverterTool.LanguageRules
         {
             while (index < this.TokenList.Count - 1)
             {
-                WrapperObject contentObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
+                WrapperObject contentObject = new WrapperObject(string.Empty, new List<WrapperType>());
                 if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     contentObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
                 }
                 else
                 {
-                    throw new Exception("This is an invalid function or variable opener.");
+                    var classObjectAccessMod = (WrapperString)classObject.GetValue("ACCESS_MOD");
+                    classObject.Value.Add(new WrapperString("ACCESS_MOD", classObjectAccessMod.Value));
                 }
 
                 if (this.TokenList[index].ToLower() == "static")
@@ -101,19 +105,31 @@ namespace ConverterTool.LanguageRules
                     contentObject.Value.Add(new WrapperBool("IS_STATIC", false));
                 }
 
-                if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
+                if (this.TokenList[index + 1] != "(")
                 {
-                    contentObject.Value.Add(new WrapperString("RETURN_TYPE", this.TokenList[index++].ToLower()));
-                }
-                else
-                {
-                    throw new Exception("This is an invalid return/set type.");
+                    if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
+                    {
+                        string valueType = this.TokenList[index++];
+                        if (this.TokenList[index] == "<")
+                        {
+                            while (this.TokenList[index] != ">")
+                            {
+                                valueType += this.TokenList[index++];
+                            }
+                            valueType += this.TokenList[index++];
+                        }
+                        contentObject.Value.Add(new WrapperString("VALUE_TYPE", valueType));
+                    }
+                    else
+                    {
+                        throw new Exception("This is an invalid return/set type.");
+                    }
                 }
 
                 if (this.TokenList[index][0] == '_')
                 {
                     contentObject.WrapperName = this.TokenList[index++];
-                    index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                    index = this.BuildClassProperty(index, contentObject);
                 }
                 else
                 {
@@ -124,6 +140,13 @@ namespace ConverterTool.LanguageRules
                 classObject.Value.Add(contentObject);
             }
 
+            return index;
+        }
+
+        private int BuildClassProperty(int index, WrapperObject contentObject)
+        {
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
             return index;
         }
 

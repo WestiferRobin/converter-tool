@@ -20,13 +20,16 @@ namespace HelloWorldSharp.Values
         }
 
         public string Value3 {set;get;}
-        public Values(string datValue)
+        public Values(string datValue, T asdf)
         {
+            _someT = asdf;
             this.Value1 = datValue;
             this.Value2 = "asdf";
             this.Value3 = "fdsa";
             this.SetRandomFunction();
         }
+
+        private T _someT;
 
         private void SetRandomFunction()
         {

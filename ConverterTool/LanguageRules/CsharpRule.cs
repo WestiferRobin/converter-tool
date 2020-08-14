@@ -111,7 +111,8 @@ namespace ConverterTool.LanguageRules
                 }
                 else
                 {
-                    throw new Exception("This is an invalid function or variable opener.");
+                    var classObjectAccessMod = (WrapperString)classObject.GetValue("ACCESS_MOD");
+                    classObject.Value.Add(new WrapperString("ACCESS_MOD", classObjectAccessMod.Value));
                 }
 
                 if (this.TokenList[index].ToLower() == "static")

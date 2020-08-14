@@ -1,8 +1,12 @@
 ﻿<Properties StartupConfiguration="{AAE7CA95-2EDE-4307-AB5B-19FAAA4CF789}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/LanguageRules/CsharpRule.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/LanguageRules/JavaRule.cs">
     <Files>
-      <File FileName="ConverterTool/LanguageRules/CsharpRule.cs" Line="478" Column="1" />
-      <File FileName="ConverterTool/Program.cs" Line="57" Column="46" />
+      <File FileName="ConverterTool/LanguageRules/CsharpRule.cs" Line="152" Column="21" />
+      <File FileName="ConverterTool/Program.cs" Line="72" Column="1" />
+      <File FileName="ConverterTool/LanguageRules/JavaRule.cs" Line="65" Column="1" />
+      <File FileName="ConverterTool/WrapperTypes/WrapperObject.cs" Line="13" Column="1" />
+      <File FileName="ConverterTool/WrapperTypes/WrapperBool.cs" Line="14" Column="1" />
+      <File FileName="ConverterTool/LanguageRules/RulesUtility.cs" Line="29" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -10,7 +14,7 @@
           <Node name="ConverterTool" expanded="True">
             <Node name="ConverterTool" expanded="True">
               <Node name="LanguageRules" expanded="True">
-                <Node name="CsharpRule.cs" selected="True" />
+                <Node name="JavaRule.cs" selected="True" />
               </Node>
               <Node name="WrapperTypes" expanded="True" />
             </Node>
@@ -22,7 +26,9 @@
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/JavaRule.cs" relfile="ConverterTool/LanguageRules/JavaRule.cs" line="315" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.ItemProperties.ConverterTool PreferredExecutionTarget="MonoDevelop.Default" />

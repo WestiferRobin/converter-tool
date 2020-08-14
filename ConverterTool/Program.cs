@@ -54,11 +54,11 @@ namespace ConverterTool
                 }
                 else
                 {
-                    bool shouldUseMain = true;
-                    sourceFile = string.Concat(FILE_PATH, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
-                    targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
-                    //sourceFile = string.Concat(FILE_PATH, "HelloWorldJ.java");
-                    //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
+                    bool shouldUseMain = false;
+                    //sourceFile = string.Concat(FILE_PATH, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
+                    //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
+                    sourceFile = string.Concat(FILE_PATH, shouldUseMain ? "HelloWorldJ.java" : "Value.java");
+                    targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
 
                     Log.Info("Conversion Tool is now running.");
 

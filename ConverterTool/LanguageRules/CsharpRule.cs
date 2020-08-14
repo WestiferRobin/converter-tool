@@ -12,7 +12,7 @@ namespace ConverterTool.LanguageRules
 
         public CsharpRule(string filename) : base(LanguageType.PROGRAM_LANG, ProgramType.C_SHARP, filename)
         {
-            this.CreateKeywords();
+            this.InitKeywords();
             this._autoPropertyList = new List<string>();
         }
 
@@ -54,12 +54,13 @@ namespace ConverterTool.LanguageRules
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "namespace", "This is not an accurate namespace.", index);
 
-            // TODO: When doing multifiles conversions PLEASE! add this back in.
-            //classObject.VariableName = this.TokenList[index++];
+            string namespaceName = string.Empty;
             while (this.TokenList[index] != "{")
             {
-                index++;    // for now just ignore the name.
+                namespaceName += this.TokenList[index++];
             }
+
+            classObject.Value.Add(new WrapperString("PACKAGE", namespaceName));
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
 
@@ -104,7 +105,7 @@ namespace ConverterTool.LanguageRules
         {
             while (index < this.TokenList.Count - 2)
             {
-                WrapperObject contentObject = new WrapperObject("TEMP_NAME", new List<WrapperType>());
+                WrapperObject contentObject = new WrapperObject(string.Empty, new List<WrapperType>());
                 if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     contentObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
@@ -123,6 +124,16 @@ namespace ConverterTool.LanguageRules
                 else
                 {
                     contentObject.Value.Add(new WrapperBool("IS_STATIC", false));
+                }
+
+                if (this.TokenList[index].ToLower() == "const")
+                {
+                    contentObject.Value.Add(new WrapperBool("IS_CONST", true));
+                    index++;
+                }
+                else
+                {
+                    contentObject.Value.Add(new WrapperBool("IS_CONST", false));
                 }
 
                 // Need to take into account for this being a constructor or a return type.
@@ -147,15 +158,32 @@ namespace ConverterTool.LanguageRules
                     }
                 }
 
-                if (this.TokenList[index][0] == '_')
+                if (this.TokenList[index].ToUpper() == this.TokenList[index])
                 {
-                    contentObject.WrapperName = this.TokenList[index++];
+                    string constName = string.Empty;
+                    while (this.TokenList[index] != "=")
+                    {
+                        constName += this.TokenList[index++];
+                    }
+                    contentObject.WrapperName = constName;
+                    index--;
+                }
+                else
+                {
+                    contentObject.WrapperName = this.TokenList[index];
+                }
+
+                if (this.TokenList[index][0] == '_' || (this.TokenList[index][0] >= 'A' && this.TokenList[index][0] <= 'Z' && this.TokenList[index + 1] != "{" && this.TokenList[index + 1] != "("))
+                {
+                    index++;
                     index = this.BuildClassProperty(index, contentObject);
                 }
                 else
                 {
-                    var asdf = this.TokenList[index];
-                    contentObject.WrapperName = this.TokenList[index++];
+                    index++;
+                    WrapperBool isConst = (WrapperBool)contentObject.GetValue("IS_CONST");
+                    if (isConst.Value)
+                        throw new Exception("This cannot use constant for auto property and function.");
                     if (this.TokenList[index] == "(")
                     {
                         index = this.BuildFunction(index, contentObject);
@@ -179,8 +207,25 @@ namespace ConverterTool.LanguageRules
 
         private int BuildClassProperty(int index, WrapperObject contentObject)
         {
-
+            if (this.TokenList[index] == ";")
+            {
+                index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                return index;
+            }
+            var type = (WrapperString)contentObject.GetValue("VALUE_TYPE");
+            string statement = $"{type.Value} {contentObject.WrapperName} ";
+            while (this.TokenList[index] != ";")
+            {
+                string lookAhead = this.TokenList[index + 1];
+                statement += this.TokenList[index];
+                if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                    && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                    && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                    statement += " ";
+                index++;
+            }
             index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+            contentObject.Value.Add(new WrapperString("STATEMENT_1", statement));
             return index;
         }
 
@@ -573,7 +618,7 @@ namespace ConverterTool.LanguageRules
                     continue;
                 }
                 hold += fileContents[index];
-                if (this.Keywords.Contains(hold.ToLower()))
+                if (this.IsValidKeyword(hold.ToLower()))
                 {
                     if (!string.IsNullOrEmpty(hold) && !string.IsNullOrWhiteSpace(hold))
                     {
@@ -586,13 +631,11 @@ namespace ConverterTool.LanguageRules
             Log.Success("Scanning Csharp file is Completed.");
         }
 
-        protected override void CreateKeywords()
+        protected override void InitKeywords()
         {
-            // TODO: create this.Keywords to be valid Keywords, Error Keywords, and Warning Keywords.
-            this.Keywords = new List<string>()
+            this.ValidKeywords = new List<string>()
             {
                 "abstract",
-                //"as",
                 "base",
                 "bool",
                 "break",
@@ -600,55 +643,33 @@ namespace ConverterTool.LanguageRules
                 "case",
                 "catch",
                 "char",
-                "checked",
                 "class",
                 "const",
                 "continue",
                 "decimal",
                 "default",
-                "delegate",
                 "do",
                 "double",
                 "else",
                 "enum",
-                "event",
-                "explicit",
-                "extern",
                 "false",
                 "finally",
-                "fixed",
                 "float",
                 "for",
-                "foreach",
-                "goto",
                 "if",
-                "implicit",
-                //"in",
                 "int",
                 "interface",
-                "internal",
                 "is",
-                "lock",
                 "long",
                 "namespace",
                 "new",
                 "null",
-                "object",
-                "operator",
-                "out",
                 "override",
-                "params",
                 "private",
                 "protected",
                 "public",
-                "readonly",
-                "ref",
                 "return",
-                "sbyte",
-                "sealed",
                 "short",
-                "sizeof",
-                "stackalloc",
                 "static",
                 "string",
                 "struct",
@@ -657,17 +678,45 @@ namespace ConverterTool.LanguageRules
                 "throw",
                 "true",
                 "try",
+                "using",
+                "void",
+                "while"
+            };
+            this.WarningKeywords = new List<string>()
+            {
+                //"as",
+                "foreach",
+                "goto",
+                //"in",
+                "internal",
+                "object",
+                "readonly",
+                "sbyte",
+                "sizeof",
                 "typeof",
                 "unit",
                 "ulong",
+                "ushort",
+                "virtual",
+            };
+            this.ErrorKeywords = new List<string>()
+            {
+                "checked",
+                "delegate",
+                "event",
+                "explicit",
+                "extern",
+                "fixed",
+                "implicit",
+                "lock",
+                "operator",
+                "out",
+                "params",
+                "ref",
+                "sealed",
+                "stackalloc",
                 "unchecked",
                 "unsafe",
-                "ushort",
-                "using",
-                "virtual",
-                "void",
-                "volatile",
-                "while"
             };
         }
     }

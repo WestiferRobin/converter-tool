@@ -10,7 +10,6 @@ namespace HelloWorldSharp
     {
         // this is going to be a problem...
         private static string _randomMessage;
-        // private static int _randomNumber = 234;
 
         // private static const int CONSTANT_INT = 234;
         
@@ -76,6 +75,24 @@ namespace HelloWorldSharp
             {
                 Console.WriteLine("Wesley Webb");
                 times--;
+            }
+        }
+
+        internal static void switchTest()
+        {
+            int asdf = 234;
+            switch (asdf)
+            {
+                case 1:
+                    printWes(1);
+                    break;
+                case 2:
+                case 3:
+                    print(3):
+                    break;
+                default:
+                    printWes(asdf);
+                    break;
             }
         }
     }

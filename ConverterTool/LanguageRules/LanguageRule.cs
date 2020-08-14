@@ -1,4 +1,5 @@
-﻿using ConverterTool.WrapperTypes;
+﻿using ConverterTool.Logger;
+using ConverterTool.WrapperTypes;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,7 +8,9 @@ namespace ConverterTool.LanguageRules
     internal abstract class LanguageRule
     {
         // Keywords
-        protected IList<string> Keywords { get; set; }
+        protected IList<string> ValidKeywords { get; set; }
+        protected IList<string> WarningKeywords { get; set; }
+        protected IList<string> ErrorKeywords { get; set; }
         
         // LanguageType
         public LanguageType TypeOfLanguage { get; }
@@ -35,13 +38,15 @@ namespace ConverterTool.LanguageRules
             this.FullFile = fileName;
             this.Filename = Path.GetFileName(fileName);
             this.Results = string.Empty;
-            this.Keywords = new List<string>();
+            this.ValidKeywords = new List<string>();
+            this.WarningKeywords = new List<string>();
+            this.ErrorKeywords = new List<string>();
             this.TokenList = new List<string>();
             this.Results = string.Empty;
             this.Structure = new List<WrapperType>();
         }
 
-        protected abstract void CreateKeywords();       // Should be interface for ProgramingLanguages to place privatly
+        protected abstract void InitKeywords();
         public abstract void ParseFile();
         public abstract void ScanFile();
         public abstract void BuildFile();
@@ -49,6 +54,23 @@ namespace ConverterTool.LanguageRules
         {
             //return this.Results;
             return "<Hello> Hello World </Hello>";
+        }
+        protected bool IsValidKeyword(string keyword)
+        {
+            if (this.ValidKeywords.Contains(keyword.ToLower()))
+            {
+                return true;
+            }
+            else if (this.WarningKeywords.Contains(keyword.ToLower()))
+            {
+                Log.Warn($"The {keyword} keyword may cause issues for build. Please consider to refactor.");
+                return true;
+            }
+            else if (this.ErrorKeywords.Contains(keyword.ToLower()))
+            {
+                Log.Error($"The {keyword} keyword cannot be compiled for the tool. Please refactor.");
+            }
+            return false;
         }
     }
 }

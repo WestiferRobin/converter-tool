@@ -7,6 +7,7 @@ public class Value<T>
 {
     private String _value;
     private T _thisT;
+    static final int DAYS_IN_WEEK = 7;
 
     public Value(String value, T asdf)
     {

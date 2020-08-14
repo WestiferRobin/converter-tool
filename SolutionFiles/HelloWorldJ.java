@@ -7,6 +7,8 @@ public class HelloWorldJ
 {
     // this is going to be a problem...
     private static String _randomMessage;
+    private static int _randomNumber = 234;
+    private static const int CONST_NUMBER = 777;
     
     public static String getRandomMessage()
     {
@@ -57,6 +59,24 @@ public class HelloWorldJ
         {
             System.out.println("Wesley Webb");
             times--;
+        }
+    }
+
+    public static void switchTest()
+    {
+        int asdf = 234;
+        switch (asdf)
+        {
+            case 1:
+                printWes(1);
+                break;
+            case 2:
+            case 3:
+                print(3):
+                break;
+            default:
+                printWes(asdf);
+                break;
         }
     }
 }

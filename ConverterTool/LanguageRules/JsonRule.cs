@@ -329,9 +329,9 @@ namespace ConverterTool.LanguageRules
             }
         }
 
-        protected override void CreateKeywords()
+        protected override void InitKeywords()
         {
-            throw new Exception("Json Rules do not need to create Keywords.");
+            throw new NotImplementedException();
         }
     }
 }

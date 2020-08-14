@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace ConverterTool.LanguageRules
-{
+{ 
     internal class JavaRule : LanguageRule
     {
         public JavaRule(string filename) : base(LanguageType.PROGRAM_LANG, ProgramType.JAVA, filename)
         {
-            this.CreateKeywords();
+            this.InitKeywords();
         }
 
         public override void BuildFile()
@@ -40,6 +40,16 @@ namespace ConverterTool.LanguageRules
                             location += this.TokenList[index++];
                         otherHeaders.Value.Add(new WrapperString("IMPORT", location));
                     }
+                }
+                else if (this.TokenList[index].ToLower() == "package")
+                {
+                    index = RulesUtility.ValidateToken(this.TokenList[index], "package", "This is not an accurate package.", index);
+                    string packageName = string.Empty;
+                    while (this.TokenList[index] != ";")
+                    {
+                        packageName += this.TokenList[index++];
+                    }
+                    otherHeaders.Value.Add(new WrapperString("PACKAGE", packageName));
                 }
                 index++;
             }
@@ -105,6 +115,16 @@ namespace ConverterTool.LanguageRules
                     contentObject.Value.Add(new WrapperBool("IS_STATIC", false));
                 }
 
+                if (this.TokenList[index].ToLower() == "final")
+                {
+                    contentObject.Value.Add(new WrapperBool("IS_CONST", true));
+                    index++;
+                }
+                else
+                {
+                    contentObject.Value.Add(new WrapperBool("IS_CONST", false));
+                }
+
                 if (this.TokenList[index + 1] != "(")
                 {
                     if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
@@ -126,14 +146,32 @@ namespace ConverterTool.LanguageRules
                     }
                 }
 
-                if (this.TokenList[index][0] == '_')
+                if (this.TokenList[index].ToUpper() == this.TokenList[index])
+                {
+                    string constName = string.Empty;
+                    while (this.TokenList[index] != "=")
+                    {
+                        constName += this.TokenList[index++];
+                    }
+                    contentObject.WrapperName = constName;
+                    index--;
+                }
+                else
+                {
+                    contentObject.WrapperName = this.TokenList[index];
+                }
+
+                if (this.TokenList[index][0] == '_' || (this.TokenList[index][0] >= 'A' && this.TokenList[index][0] <= 'Z' && this.TokenList[index + 1] != "{" && this.TokenList[index + 1] != "("))
                 {
                     contentObject.WrapperName = this.TokenList[index++];
                     index = this.BuildClassProperty(index, contentObject);
                 }
                 else
                 {
-                    contentObject.WrapperName = this.TokenList[index++];
+                    index++;
+                    WrapperBool isConst = (WrapperBool)contentObject.GetValue("IS_CONST");
+                    if (isConst.Value)
+                        throw new Exception("This cannot use constant for auto property and function.");
                     index = this.BuildFunction(index, contentObject);
                 }
 
@@ -145,8 +183,25 @@ namespace ConverterTool.LanguageRules
 
         private int BuildClassProperty(int index, WrapperObject contentObject)
         {
-
+            if (this.TokenList[index] == ";")
+            {
+                index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                return index;
+            }
+            var type = (WrapperString)contentObject.GetValue("VALUE_TYPE");
+            string statement = $"{type.Value} {contentObject.WrapperName} ";
+            while (this.TokenList[index] != ";")
+            {
+                string lookAhead = this.TokenList[index + 1];
+                statement += this.TokenList[index];
+                if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                    && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                    && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                    statement += " ";
+                index++;
+            }
             index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+            contentObject.Value.Add(new WrapperString("STATEMENT_1", statement));
             return index;
         }
 
@@ -409,7 +464,7 @@ namespace ConverterTool.LanguageRules
                     continue;
                 }
                 hold += fileContents[index];
-                if (this.Keywords.Contains(hold.ToLower()))
+                if (this.IsValidKeyword(hold.ToLower()))
                 {
                     if (!string.IsNullOrEmpty(hold) && !string.IsNullOrWhiteSpace(hold))
                     {
@@ -422,14 +477,12 @@ namespace ConverterTool.LanguageRules
             Log.Success("Scanning Java file is Completed.");
         }
 
-        protected override void CreateKeywords()
+        protected override void InitKeywords()
         {
-            this.Keywords = new List<string>()
+            this.ValidKeywords = new List<string>()
             {
                 "abstract",
-                "assert",
                 "boolean",
-                "byte",
                 "case",
                 "catch",
                 "char",
@@ -440,21 +493,16 @@ namespace ConverterTool.LanguageRules
                 "do",
                 "double",
                 "else",
-                "enum",
-                "extends",
-                "final",
                 "finally",
                 "float",
                 "for",
-                "goto",
                 "if",
                 "implements",
                 "import",
-                "instanceof",
                 "int",
                 "interface",
+                "instanceof",
                 "long",
-                "native",
                 "new",
                 "package",
                 "private",
@@ -463,16 +511,31 @@ namespace ConverterTool.LanguageRules
                 "return",
                 "short",
                 "static",
-                "strictfp",
                 "super",
                 "swtich",
-                "synchronized",
                 "this",
                 "throw",
+                "try",
+                "void",
+                "while"
+            };
+            this.WarningKeywords = new List<string>()
+            {
+                "byte",
+                "enum",
+                "extends",
+                "final",
+                "goto",
+            };
+            this.ErrorKeywords = new List<string>()
+            {
+                "assert",
+                "native",
+                "strictfp",
+                "swtich",
+                "synchronized",
                 "throws",
                 "transient",
-                "try",
-                "void"
             };
         }
     }

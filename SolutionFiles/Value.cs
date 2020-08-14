@@ -7,6 +7,8 @@ namespace HelloWorldSharp.Values
 {
     public class Values<T>
     {
+        private static int _randomNumber = 234;
+        private static const int CONST_NUMBER = 777;
         public string Value1 {get;set;}
 
         private string _value2;

@@ -5,10 +5,16 @@ import values;
 
 public class HelloWorldJ
 {
+    // enum InnerEnum {
+    //     ASDF = 0,
+    //     FDSA = 1,
+    //     DOOD = 234,
+    // }
+
     // this is going to be a problem...
     private static String _randomMessage;
     private static int _randomNumber = 234;
-    private static const int CONST_NUMBER = 777;
+    private static final int CONST_NUMBER = 777;
     
     public static String getRandomMessage()
     {

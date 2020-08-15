@@ -57,16 +57,16 @@ namespace ConverterTool.LanguageRules
         }
         protected bool IsValidKeyword(string keyword)
         {
-            if (this.ValidKeywords.Contains(keyword.ToLower()))
+            if (this.ValidKeywords.Contains(keyword))
             {
                 return true;
             }
-            else if (this.WarningKeywords.Contains(keyword.ToLower()))
+            else if (this.WarningKeywords.Contains(keyword))
             {
                 Log.Warn($"The {keyword} keyword may cause issues for build. Please consider to refactor.");
                 return true;
             }
-            else if (this.ErrorKeywords.Contains(keyword.ToLower()))
+            else if (this.ErrorKeywords.Contains(keyword))
             {
                 Log.Error($"The {keyword} keyword cannot be compiled for the tool. Please refactor.");
             }

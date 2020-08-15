@@ -21,6 +21,7 @@ namespace ConverterTool.LanguageRules
         private int AddHeader(int index)
         {
             var otherHeaders = new WrapperObject("HEADERS", new List<WrapperType>());
+
             // TODO: make sure to implement this while multi file task
             while (this.TokenList[index].ToLower() != "class" &&
                 !RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
@@ -55,6 +56,7 @@ namespace ConverterTool.LanguageRules
             }
 
             this.Structure.Add(otherHeaders);
+
             return index;
         }
 
@@ -207,10 +209,11 @@ namespace ConverterTool.LanguageRules
 
         private int BuildFunction(int index, WrapperObject functionObject)
         {
+            int holderValue = 1;
+            WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
+
             index = RulesUtility.ValidateToken(this.TokenList[index], "(", "This needs is a valid \'(\'.", index);
 
-            WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
-            int holderValue = 1;
             while (this.TokenList[index] != ")")
             {
                 WrapperObject parameter = new WrapperObject($"PARAMETER_{holderValue++}", new List<WrapperType>());
@@ -251,7 +254,92 @@ namespace ConverterTool.LanguageRules
             return index;
         }
 
-        private int FillInnerBrackets(int index, WrapperObject wrapperObject)
+        private int FillBracketStatement(int index, WrapperObject wrapperObject)
+        {
+            index = this.FillConditionalStatement(index, wrapperObject);
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+            index = this.FillFunctionContent(index, wrapperObject);
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+
+            return index;
+        }
+
+        private int FillSwitchStatement(int index, WrapperObject wrapperObject)
+        {
+            WrapperObject cases = new WrapperObject("CASES", new List<WrapperType>());
+            int caseCount = 1;
+
+            index = this.FillConditionalStatement(index, wrapperObject);
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+
+            while (this.TokenList[index] != "}")
+            {
+                switch (this.TokenList[index])
+                {
+                    case "case":
+                        List<WrapperType> instantCases = new List<WrapperType>();
+                        WrapperObject thisCase = new WrapperObject($"CASE_{caseCount++}", new List<WrapperType>());
+                        WrapperObject caseContent = new WrapperObject("CASE_CONTENT", new List<WrapperType>());
+
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "case", "This needs is a valid \'case\'.", index);
+                        string caseValue = string.Empty;
+                        while (this.TokenList[index] != ":")
+                        {
+                            caseValue += this.TokenList[index++];
+                        }
+                        thisCase.Value.Add(new WrapperString("CASE_VALUE", caseValue));
+                        index = RulesUtility.ValidateToken(this.TokenList[index], ":", "This needs is a valid \':\'.", index);
+                        instantCases.Add(thisCase);
+
+                        while (this.TokenList[index] == "case")
+                        {
+                            WrapperObject otherCase = new WrapperObject($"CASE_{caseCount++}", new List<WrapperType>());
+                            index = RulesUtility.ValidateToken(this.TokenList[index], "case", "This needs is a valid \'case\'.", index);
+                            string multiCaseValue = string.Empty;
+                            while (this.TokenList[index] != ":")
+                            {
+                                multiCaseValue += this.TokenList[index++];
+                            }
+                            otherCase.Value.Add(new WrapperString("CASE_VALUE", multiCaseValue));
+                            index = RulesUtility.ValidateToken(this.TokenList[index], ":", "This needs is a valid \':\'.", index);
+                            instantCases.Add(otherCase);
+                        }
+
+                        index = this.FillFunctionContent(index, caseContent, false);
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "break", "This needs is a valid \'break\'.", index);
+                        index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+
+                        foreach (var inst in instantCases)
+                        {
+                            (inst as WrapperObject).Value.Add(caseContent);
+                            cases.Value.Add(inst);
+                        }
+                        break;
+                    case "default":
+                        WrapperObject defaultCase = new WrapperObject($"DEFAULT", new List<WrapperType>());
+                        WrapperObject defaultContent = new WrapperObject("DEFAULT_CONTENT", new List<WrapperType>());
+
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "default", "This needs is a valid \'default\'.", index);
+                        index = RulesUtility.ValidateToken(this.TokenList[index], ":", "This needs is a valid \':\'.", index);
+
+                        index = this.FillFunctionContent(index, defaultContent, false);
+
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "break", "This needs is a valid \'break\'.", index);
+                        index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+
+                        defaultCase.Value.Add(defaultContent);
+                        cases.Value.Add(defaultCase);
+                        break;
+                    default:
+                        throw new Exception("No valid case or default for switch statement");
+                }
+            }
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+            return index;
+        }
+
+        private int FillConditionalStatement(int index, WrapperObject wrapperObject)
         {
             string conditionStatement = string.Empty;
             var values = string.Empty;
@@ -270,15 +358,12 @@ namespace ConverterTool.LanguageRules
             conditionStatement += values;
             index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
             conditionStatement += ")";
-
             wrapperObject.Value.Add(new WrapperString("CONDITION_STATEMENT", conditionStatement));
-            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
-            index = this.FillFunctionContent(index, wrapperObject);
-            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+
             return index;
         }
 
-        private int FillFunctionContent(int index, WrapperObject functionContent)
+        private int FillFunctionContent(int index, WrapperObject functionContent, bool isSwitchStatement = true)
         {
             int counter = 1;
             int whileLoopCount = 1;
@@ -286,76 +371,89 @@ namespace ConverterTool.LanguageRules
             int ifCount = 1;
             int ifElseCount = 1;
             int elseCount = 1;
-            while (this.TokenList[index] != "}")
+            int switchCount = 1;
+
+            string endingToken = isSwitchStatement ? "}" : "break";
+
+            while (this.TokenList[index] != endingToken)
             {
                 var values = string.Empty;
-                if (this.TokenList[index].ToLower() == "for")
+                string flag = this.TokenList[index].ToLower();
+
+                switch (flag)
                 {
-                    index = RulesUtility.ValidateToken(this.TokenList[index], "for", "This needs is a valid \'for\'.", index);
-                    WrapperObject forObject = new WrapperObject($"FOR_{forLoopCount++}", new List<WrapperType>());
+                    case "for":
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "for", "This needs is a valid \'for\'.", index);
+                        WrapperObject forObject = new WrapperObject($"FOR_{forLoopCount++}", new List<WrapperType>());
 
-                    index = this.FillInnerBrackets(index, forObject);
+                        index = this.FillBracketStatement(index, forObject);
 
-                    functionContent.Value.Add(forObject);
-                }
-                else if (this.TokenList[index].ToLower() == "while")
-                {
-                    index = RulesUtility.ValidateToken(this.TokenList[index], "while", "This needs is a valid \'while\'.", index);
-                    WrapperObject whileObject = new WrapperObject($"WHILE_{whileLoopCount++}", new List<WrapperType>());
+                        functionContent.Value.Add(forObject);
+                        break;
+                    case "while":
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "while", "This needs is a valid \'while\'.", index);
+                        WrapperObject whileObject = new WrapperObject($"WHILE_{whileLoopCount++}", new List<WrapperType>());
 
-                    index = this.FillInnerBrackets(index, whileObject);
+                        index = this.FillBracketStatement(index, whileObject);
 
-                    functionContent.Value.Add(whileObject);
-                }
-                else if (this.TokenList[index].ToLower() == "if")
-                {
-                    index = RulesUtility.ValidateToken(this.TokenList[index], "if", "This needs is a valid \'if\'.", index);
-
-                    WrapperObject ifObject = new WrapperObject($"IF_{ifCount++}", new List<WrapperType>());
-
-                    index = this.FillInnerBrackets(index, ifObject);
-
-                    functionContent.Value.Add(ifObject);
-                }
-                else if (this.TokenList[index].ToLower() == "else")
-                {
-                    index = RulesUtility.ValidateToken(this.TokenList[index], "else", "This needs is a valid \'else\'.", index);
-
-                    if (this.TokenList[index].ToLower() == "if")
-                    {
+                        functionContent.Value.Add(whileObject);
+                        break;
+                    case "if":
                         index = RulesUtility.ValidateToken(this.TokenList[index], "if", "This needs is a valid \'if\'.", index);
-                        WrapperObject ifObject = new WrapperObject($"ELSE_IF_{ifElseCount++}", new List<WrapperType>());
 
-                        index = this.FillInnerBrackets(index, ifObject);
+                        WrapperObject ifObject = new WrapperObject($"IF_{ifCount++}", new List<WrapperType>());
+
+                        index = this.FillBracketStatement(index, ifObject);
 
                         functionContent.Value.Add(ifObject);
-                    }
-                    else
-                    {
-                        WrapperObject elseObject = new WrapperObject($"ELSE_{elseCount++}", new List<WrapperType>());
+                        break;
+                    case "else":
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "else", "This needs is a valid \'else\'.", index);
 
-                        index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
-                        index = this.FillFunctionContent(index, elseObject);
-                        index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+                        if (this.TokenList[index].ToLower() == "if")
+                        {
+                            index = RulesUtility.ValidateToken(this.TokenList[index], "if", "This needs is a valid \'if\'.", index);
+                            WrapperObject elseIfObject = new WrapperObject($"ELSE_IF_{ifElseCount++}", new List<WrapperType>());
 
-                        functionContent.Value.Add(elseObject);
-                    }
-                }
-                else
-                {
-                    while (this.TokenList[index] != ";")
-                    {
-                        string lookAhead = this.TokenList[index + 1];
-                        values += this.TokenList[index];
-                        if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
-                            && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
-                            && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
-                            values += " ";
-                        index++;
-                    }
-                    index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
-                    values += ";";
-                    functionContent.Value.Add(new WrapperString($"STATEMENT_{counter++}", values));
+                            index = this.FillBracketStatement(index, elseIfObject);
+
+                            functionContent.Value.Add(elseIfObject);
+                        }
+                        else
+                        {
+                            WrapperObject elseObject = new WrapperObject($"ELSE_{elseCount++}", new List<WrapperType>());
+
+                            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+                            index = this.FillFunctionContent(index, elseObject);
+                            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+
+                            functionContent.Value.Add(elseObject);
+                        }
+                        break;
+                    case "switch":
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "switch", "This needs is a valid \'switch\'.", index);
+
+                        WrapperObject switchObject = new WrapperObject($"SWITCH_{switchCount++}", new List<WrapperType>());
+
+                        index = this.FillSwitchStatement(index, switchObject);
+
+                        functionContent.Value.Add(switchObject);
+                        break;
+                    default:
+                        while (this.TokenList[index] != ";")
+                        {
+                            string lookAhead = this.TokenList[index + 1];
+                            values += this.TokenList[index];
+                            if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                                && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                                && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                                values += " ";
+                            index++;
+                        }
+                        index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+                        values += ";";
+                        functionContent.Value.Add(new WrapperString($"STATEMENT_{counter++}", values));
+                        break;
                 }
             }
             return index;

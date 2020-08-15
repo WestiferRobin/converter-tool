@@ -6,8 +6,33 @@ using Values;
 
 namespace HelloWorldSharp
 {
+    // public class Something
+    // {
+    //     public Something()
+    //     {
+
+    //     }
+    // }
+
+    // struct Welsey
+    // {
+    //     public Welsey()
+    //     {
+
+    //     }
+    // }
+
+    // enum OutterEnum {
+    //     FFFF,
+    //     AAAA
+    // }
     public static class Program
     {
+        // enum InnerEnum {
+        //     ASDF = 0,
+        //     FDSA = 1,
+        //     DOOD = 234,
+        // }
         // this is going to be a problem...
         private static string _randomMessage;
 
@@ -78,7 +103,7 @@ namespace HelloWorldSharp
             }
         }
 
-        internal static void switchTest()
+        public static void SwieTest()
         {
             int asdf = 234;
             switch (asdf)
@@ -88,7 +113,7 @@ namespace HelloWorldSharp
                     break;
                 case 2:
                 case 3:
-                    print(3):
+                    print(3);
                     break;
                 default:
                     printWes(asdf);

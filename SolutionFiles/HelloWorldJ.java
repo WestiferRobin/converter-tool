@@ -3,13 +3,26 @@ import java.lang.*;
 import java.util.*;
 import values;
 
+enum OutterEnum {
+    FFFF,
+    AAAA
+} 
+
 public class HelloWorldJ
 {
-    // enum InnerEnum {
-    //     ASDF = 0,
-    //     FDSA = 1,
-    //     DOOD = 234,
-    // }
+    enum InnerEnum {
+        ASDF = 0,
+        FDSA,
+        DOOD = 234,
+    }
+
+    public class Haha
+    {
+        public Haha()
+        {
+            
+        }
+    }
 
     // this is going to be a problem...
     private static String _randomMessage;

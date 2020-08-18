@@ -1,16 +1,17 @@
 ﻿using ConverterTool.Logger;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ConverterTool
 {
     internal class Program
     {
-        // THIS IS FOR WINDOWS!
-        //private const string FILE_PATH = @"D:\ProgramProjects\Convertertool\SolutionFiles\";
+        // Debug file path
+        private static readonly string filePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 
+            @"D:\ProgramProjects\Convertertool\SolutionFiles\"
+            : @"/Users/wesitferrobin/Projects/workspace/Convertertool/SolutionFiles/";
 
-        // THIS IS FOR MAC/LINUX!
-        private const string FILE_PATH = @"/Users/wesitferrobin/Projects/workspace/Convertertool/SolutionFiles/";
         public static void Main(string[] args)
         {
             try
@@ -26,20 +27,20 @@ namespace ConverterTool
                         switch (flag)
                         {
                             case 1:
-                                sourceFile = string.Concat(FILE_PATH, "WesTest.json");
-                                targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputXml.xml");
+                                sourceFile = string.Concat(filePath, "WesTest.json");
+                                targetFile = string.Concat(filePath, @"OUTPUT\OutputXml.xml");
                                 break;
                             case 2:
-                                sourceFile = string.Concat(FILE_PATH, "WessTest.xml");
-                                targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJson.json");
+                                sourceFile = string.Concat(filePath, "WessTest.xml");
+                                targetFile = string.Concat(filePath, @"OUTPUT\OutputJson.json");
                                 break;
                             case 3:
-                                sourceFile = string.Concat(FILE_PATH, "HelloWorldSharp.cs");
-                                targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
+                                sourceFile = string.Concat(filePath, "HelloWorldSharp.cs");
+                                targetFile = string.Concat(filePath, @"OUTPUT\OutputJV.java");
                                 break;
                             case 4:
-                                sourceFile = string.Concat(FILE_PATH, "HelloWorldJ.java");
-                                targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
+                                sourceFile = string.Concat(filePath, "HelloWorldJ.java");
+                                targetFile = string.Concat(filePath, @"OUTPUT\OutputCS.cs");
                                 break;
                         }
                         Log.Info("Conversion Tool is now running.");
@@ -55,10 +56,10 @@ namespace ConverterTool
                 else
                 {
                     bool shouldUseMain = true;
-                    //sourceFile = string.Concat(FILE_PATH, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
-                    //targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputJV.java");
-                    sourceFile = string.Concat(FILE_PATH, shouldUseMain ? "HelloWorldJ.java" : "Value.java");
-                    targetFile = string.Concat(FILE_PATH, @"OUTPUT\OutputCS.cs");
+                    //sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
+                    //targetFile = string.Concat(filePath, @"OUTPUT\OutputJV.java");
+                    sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldJ.java" : "Value.java");
+                    targetFile = string.Concat(filePath, @"OUTPUT\OutputCS.cs");
 
                     Log.Info("Conversion Tool is now running.");
 

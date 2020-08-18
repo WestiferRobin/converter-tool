@@ -6,37 +6,62 @@ using Values;
 
 namespace HelloWorldSharp
 {
-    // public class Something
-    // {
-    //     public Something()
-    //     {
+    public struct WesMan
+    {
+        private struct Bean
+        {
+            public Bean(int asdf, int fdsa)
+            {
 
-    //     }
-    // }
+            }
+        }
 
-    // struct Welsey
-    // {
-    //     public Welsey()
-    //     {
+        public enum BBB
+        {
+            HAHA,
+            HEHE,
+        }
 
-    //     }
-    // }
+        public class Wows
+        {
+            public Wow()
+            {
 
-    // enum OutterEnum {
-    //     FFFF,
-    //     AAAA
-    // }
+            }
+        }
+        public static string Asdf {get; set;}
+        private static string Fdsa { get; set; }
+        public WesMan(int asdf, int fdsa)
+        {
+
+        }
+
+        public void GetMeThatThang()
+        { 
+            var moString = Asdf + Fdsa;
+        }
+    }
+
+    public struct Welsey
+    {
+        public int BeansWesLikes {get;set;}
+        public Welsey(int bean)
+        {
+            this.BeansWesLikes = bean;
+        }
+    }
+
+    public enum OterEnum {
+        FFFF,
+        AAAA
+    }
+    
     public static class Program
     {
-        // enum InnerEnum {
-        //     ASDF = 0,
-        //     FDSA = 1,
-        //     DOOD = 234,
-        // }
         // this is going to be a problem...
         private static string _randomMessage;
 
-        // private static const int CONSTANT_INT = 234;
+        private static const int CONSTANT_INT = 234;
         
         public static void Main(string[] args)
         {

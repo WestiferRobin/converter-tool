@@ -21,6 +21,17 @@ namespace ConverterTool.LanguageRules
             Log.Warn("Csharp BuildFile is not ready.");
         }
 
+        public override void ParseFile()
+        {
+            Log.Info("Staring to Parse Csharp file.");
+
+            int index = 0;
+            index = this.AddHeader(index);
+            _ = this.AddNamespace(index);
+
+            Log.Success("Parsing Csharp is Completed.");
+        }
+
         private int AddHeader(int index)
         {
             var otherHeaders = new WrapperObject("HEADERS", new List<WrapperType>());
@@ -48,78 +59,151 @@ namespace ConverterTool.LanguageRules
             return index;
         }
 
-        private int AddClass(int index)
+        private int AddNamespace(int index)
         {
-            var classObject = new WrapperObject(string.Empty, new List<WrapperType>());
+            var namespaceObject = new WrapperObject(string.Empty, new List<WrapperType>());
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "namespace", "This is not an accurate namespace.", index);
 
-            string namespaceName = string.Empty;
             while (this.TokenList[index] != "{")
             {
-                namespaceName += this.TokenList[index++];
-            }
-
-            classObject.Value.Add(new WrapperString("PACKAGE", namespaceName));
-
-            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
-
-            if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
-            {
-                classObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
-            }
-            else
-            {
-                classObject.Value.Add(new WrapperString("ACCESS_MOD", "public"));
-            }
-
-            if (this.TokenList[index].ToLower() == "static")
-            {
-                classObject.Value.Add(new WrapperBool("IS_STATIC", true));
-                index++;
-            }
-            else
-            {
-                classObject.Value.Add(new WrapperBool("IS_STATIC", false));
-            }
-
-            index = RulesUtility.ValidateToken(this.TokenList[index], "class", "This is not an accurate class.", index);
-
-            while (this.TokenList[index] != "{")
-            {
-                classObject.WrapperName += this.TokenList[index++];
+                namespaceObject.WrapperName += this.TokenList[index++];
             }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
 
-            index = BuildClassContent(index, classObject);
+            while (this.TokenList[index] != "}")
+            {
+                var potentialObject = new WrapperObject(string.Empty, new List<WrapperType>());
+
+                if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
+                {
+                    potentialObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
+                }
+                else
+                {
+                    potentialObject.Value.Add(new WrapperString("ACCESS_MOD", "public"));
+                }
+
+                if (this.TokenList[index].ToLower() == "static")
+                {
+                    potentialObject.Value.Add(new WrapperBool("IS_STATIC", true));
+                    index++;
+                }
+                else if (this.TokenList[index].ToLower() == "struct")
+                {
+                    index = this.AddClassLikeType(index, potentialObject, namespaceObject, "struct");
+                    continue;
+                }
+                else if (this.TokenList[index].ToLower() == "enum")
+                {
+                    index = this.AddClassLikeType(index, potentialObject, namespaceObject, "enum");
+                    continue;
+                }
+                else
+                {
+                    potentialObject.Value.Add(new WrapperBool("IS_STATIC", false));
+                }
+
+                index = this.AddClassLikeType(index, potentialObject, namespaceObject, "class");
+            }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This is an invalid class closer.", index);
-            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This is an invalid class closer.", index);
 
-            this.Structure.Add(classObject);
+            this.Structure.Add(namespaceObject);
+
             return index;
         }
 
-        private int BuildClassContent(int index, WrapperObject classObject)
+        private int AddClassLikeType(int index, WrapperObject wrapperObject, WrapperObject parentObject, string flag)
         {
-            while (index < this.TokenList.Count - 2)
+            index = RulesUtility.ValidateToken(this.TokenList[index], flag, $"This is not an accurate {flag}.", index);
+
+            while (this.TokenList[index] != "{")
+            {
+                wrapperObject.WrapperName += this.TokenList[index++];
+            }
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
+
+            switch (flag)
+            {
+                case "enum":
+                    index = BuildEnumContent(index, wrapperObject);
+                    break;
+                case "struct":
+                case "class":
+                    index = BuildClassOrStructContent(index, wrapperObject, flag == "struct");
+                    break;
+                default:
+                    throw new Exception($"Unable to make a enum, struct, or class with this token {flag}.");
+            }
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This is an invalid class closer.", index);
+
+            parentObject.Value.Add(wrapperObject);
+
+            return index;
+        }
+
+        private int BuildEnumContent(int index, WrapperObject enumObject)
+        {
+            int times = 0;
+            WrapperObject enumContent = new WrapperObject("OBJECT_CONTENT", new List<WrapperType>());
+
+            while (this.TokenList[index] != "}")
+            {
+                WrapperString enumEntry = new WrapperString($"ENUM_VALUE_{times++}", string.Empty);
+
+                while (this.TokenList[index] != "}" && this.TokenList[index] != ",")
+                {
+                    enumEntry.Value += this.TokenList[index++];
+                }
+
+                enumContent.Value.Add(enumEntry);
+
+                if (this.TokenList[index] != "}")
+                {
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ",", $"{enumObject.WrapperName} enum object needs a valid divider.", index);
+                }
+            }
+
+            enumObject.Value.Add(enumContent);
+
+            return index;
+        }
+
+        private int BuildClassOrStructContent(int index, WrapperObject classObject, bool isStruct)
+        {
+            WrapperObject classContent = new WrapperObject("OBJECT_CONTENT", new List<WrapperType>());
+            while (this.TokenList[index] != "}")
             {
                 WrapperObject contentObject = new WrapperObject(string.Empty, new List<WrapperType>());
+
                 if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     contentObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
                 }
                 else
                 {
-                    var classObjectAccessMod = (WrapperString)classObject.GetValue("ACCESS_MOD");
-                    classObject.Value.Add(new WrapperString("ACCESS_MOD", classObjectAccessMod.Value));
+                    var classObjectAccessMod = (WrapperString)contentObject.GetValue("ACCESS_MOD");
+                    contentObject.Value.Add(new WrapperString("ACCESS_MOD", classObjectAccessMod.Value));
                 }
 
                 if (this.TokenList[index].ToLower() == "static")
                 {
                     contentObject.Value.Add(new WrapperBool("IS_STATIC", true));
                     index++;
+                }
+                else if (this.TokenList[index].ToLower() == "struct")
+                {
+                    index = this.AddClassLikeType(index, contentObject, classContent, "struct");
+                    continue;
+                }
+                else if (this.TokenList[index].ToLower() == "enum")
+                {
+                    index = this.AddClassLikeType(index, contentObject, classContent, "enum");
+                    continue;
                 }
                 else
                 {
@@ -134,6 +218,12 @@ namespace ConverterTool.LanguageRules
                 else
                 {
                     contentObject.Value.Add(new WrapperBool("IS_CONST", false));
+                }
+
+                if (this.TokenList[index] == "class")
+                {
+                    index = this.AddClassLikeType(index, contentObject, classContent, "class");
+                    continue;
                 }
 
                 // Need to take into account for this being a constructor or a return type.
@@ -186,11 +276,11 @@ namespace ConverterTool.LanguageRules
                         throw new Exception("This cannot use constant for auto property and function.");
                     if (this.TokenList[index] == "(")
                     {
-                        index = this.BuildFunction(index, contentObject);
+                        index = this.BuildFunction(index, contentObject, isStruct && classObject.WrapperName == contentObject.WrapperName);
                     }
                     else if (this.TokenList[index] == "{")
                     {
-                        index = this.BuildAutoProperty(index, contentObject, classObject);
+                        index = this.BuildAutoProperty(index, contentObject, classContent);
                         continue;
                     }
                     else
@@ -199,8 +289,10 @@ namespace ConverterTool.LanguageRules
                     }
                 }
 
-                classObject.Value.Add(contentObject);
+                classContent.Value.Add(contentObject);
             }
+
+            classObject.Value.Add(classContent);
             
             return index;
         }
@@ -322,7 +414,7 @@ namespace ConverterTool.LanguageRules
             return index;
         }
 
-        private int BuildFunction(int index, WrapperObject functionObject)
+        private int BuildFunction(int index, WrapperObject functionObject, bool isStruct)
         {
             int holderValue = 1;
             WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
@@ -355,7 +447,10 @@ namespace ConverterTool.LanguageRules
                 }
                 parameters.Value.Add(parameter);
             }
-            if (parameters.Value.Count > 0)
+
+            if (isStruct && parameters.Value.Count < 0)
+                throw new Exception("You cannot have a default constructor for a struct object.");
+            else if (parameters.Value.Count > 0)
                 functionObject.Value.Add(parameters);
 
             index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
@@ -365,6 +460,7 @@ namespace ConverterTool.LanguageRules
             index = this.FillFunctionContent(index, functionContent);
 
             functionObject.Value.Add(functionContent);
+
             index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
 
             return index;
@@ -607,16 +703,6 @@ namespace ConverterTool.LanguageRules
             }
 
             return values;
-        }
-
-        public override void ParseFile()
-        {
-            Log.Info("Staring to Parse Csharp file.");
-            int index = 0;
-            index = this.AddHeader(index);
-            _ = this.AddClass(index);
-            Log.Success("Parsing Csharp is Completed.");
-            var asdf = this.Structure;
         }
 
         private string CleanSourceCode()

@@ -8,6 +8,7 @@ namespace ConverterTool.LanguageRules
 { 
     internal class JavaRule : LanguageRule
     {
+        private bool _isOneClass = false;
         public JavaRule(string filename) : base(LanguageType.PROGRAM_LANG, ProgramType.JAVA, filename)
         {
             this.InitKeywords();
@@ -18,12 +19,21 @@ namespace ConverterTool.LanguageRules
             Log.Warn("Java BuildFile is not ready.");
         }
 
+        public override void ParseFile()
+        {
+            Log.Info("Staring to Parse Java file.");
+            int index = 0;
+            index = this.AddHeader(index);
+            _ = this.Start(index);
+            Log.Success("Parsing Java file is Completed.");
+        }
+
         private int AddHeader(int index)
         {
             var otherHeaders = new WrapperObject("HEADERS", new List<WrapperType>());
 
             // TODO: make sure to implement this while multi file task
-            while (this.TokenList[index].ToLower() != "class" &&
+            while ((this.TokenList[index].ToLower() != "class" && this.TokenList[index].ToLower() != "enum") &&
                 !RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
             {
                 if (this.TokenList[index].ToLower() == "import")
@@ -60,43 +70,120 @@ namespace ConverterTool.LanguageRules
             return index;
         }
 
-        private int AddClass(int index)
+        private int Start(int index)
         {
-            var classObject = new WrapperObject(string.Empty, new List<WrapperType>());
-
-            if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
+            WrapperObject wholeFile = new WrapperObject("WHOLE_FILE", new List<WrapperType>());
+            while (index < this.TokenList.Count)
             {
-                classObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
-            }
-            else
-            {
-                classObject.Value.Add(new WrapperString("ACCESS_MOD", "public"));
+                WrapperObject potentialObject = new WrapperObject(string.Empty, new List<WrapperType>());
+
+                if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
+                {
+                    potentialObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
+                }
+                else
+                {
+                    potentialObject.Value.Add(new WrapperString("ACCESS_MOD", "public"));
+                }
+
+                if (this.TokenList[index].ToLower() == "static")
+                {
+                    potentialObject.Value.Add(new WrapperBool("IS_STATIC", true));
+                    index++;
+                }
+                else if (this.TokenList[index].ToLower() == "enum")
+                {
+                    index = this.AddClassLikeType(index, potentialObject, wholeFile, "enum");
+                    continue;
+                }
+                else
+                {
+                    potentialObject.Value.Add(new WrapperBool("IS_STATIC", false));
+                }
+
+                if (this._isOneClass)
+                {
+                    throw new Exception("Java does not allow multiple classes. Please seperate classes into individual files.");
+                }
+                else
+                {
+                    this._isOneClass = true;
+                }
+
+                index = this.AddClassLikeType(index, potentialObject, wholeFile, "class");
             }
 
-            classObject.Value.Add(new WrapperBool("IS_STATIC", this.TokenList[index].Contains("static")));
+            this.Structure.Add(wholeFile);
 
-            index = RulesUtility.ValidateToken(this.TokenList[index], "class", "This is not an accurate class.", index);
+            this._isOneClass = false;
+
+            return index;
+        }
+
+        private int AddClassLikeType(int index, WrapperObject wrapperObject, WrapperObject parentObject, string flag)
+        {
+            index = RulesUtility.ValidateToken(this.TokenList[index], flag, $"This is not an accurate {flag}.", index);
 
             while (this.TokenList[index] != "{")
             {
-                classObject.WrapperName += this.TokenList[index++];
+                wrapperObject.WrapperName += this.TokenList[index++];
             }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This is an invalid class opener.", index);
 
-            index = BuildClassContent(index, classObject);
+            switch (flag)
+            {
+                case "enum":
+                    index = BuildEnumContent(index, wrapperObject);
+                    break;
+                case "class":
+                    index = BuildClassContent(index, wrapperObject);
+                    break;
+                default:
+                    throw new Exception($"Unable to make a enum, struct, or class with this token {flag}.");
+            }
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This is an invalid class closer.", index);
 
-            this.Structure.Add(classObject);
+            parentObject.Value.Add(wrapperObject);
+
+            return index;
+        }
+
+        private int BuildEnumContent(int index, WrapperObject enumObject)
+        {
+            int times = 0;
+            WrapperObject enumContent = new WrapperObject("ENUM_CONTENT", new List<WrapperType>());
+
+            while (this.TokenList[index] != "}")
+            {
+                WrapperString enumEntry = new WrapperString($"ENUM_VALUE_{times++}", string.Empty);
+
+                while (this.TokenList[index] != "}" && this.TokenList[index] != ",")
+                {
+                    enumEntry.Value += this.TokenList[index++];
+                }
+
+                enumContent.Value.Add(enumEntry);
+
+                if (this.TokenList[index] != "}")
+                {
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ",", $"{enumObject.WrapperName} enum object needs a valid divider.", index);
+                }
+            }
+
+            enumObject.Value.Add(enumContent);
+
             return index;
         }
 
         private int BuildClassContent(int index, WrapperObject classObject)
         {
-            while (index < this.TokenList.Count - 1)
+            WrapperObject classContent = new WrapperObject("OBJECT_CONTENT", new List<WrapperType>());
+            while (this.TokenList[index] != "}")
             {
                 WrapperObject contentObject = new WrapperObject(string.Empty, new List<WrapperType>());
+
                 if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     contentObject.Value.Add(new WrapperString("ACCESS_MOD", this.TokenList[index++].ToLower()));
@@ -104,13 +191,18 @@ namespace ConverterTool.LanguageRules
                 else
                 {
                     var classObjectAccessMod = (WrapperString)classObject.GetValue("ACCESS_MOD");
-                    classObject.Value.Add(new WrapperString("ACCESS_MOD", classObjectAccessMod.Value));
+                    contentObject.Value.Add(new WrapperString("ACCESS_MOD", classObjectAccessMod.Value));
                 }
 
                 if (this.TokenList[index].ToLower() == "static")
                 {
                     contentObject.Value.Add(new WrapperBool("IS_STATIC", true));
                     index++;
+                }
+                else if (this.TokenList[index].ToLower() == "enum")
+                {
+                    index = this.AddClassLikeType(index, contentObject, classContent, "enum");
+                    continue;
                 }
                 else
                 {
@@ -125,6 +217,12 @@ namespace ConverterTool.LanguageRules
                 else
                 {
                     contentObject.Value.Add(new WrapperBool("IS_CONST", false));
+                }
+
+                if (this.TokenList[index] == "class")
+                {
+                    index = this.AddClassLikeType(index, contentObject, classContent, "class");
+                    continue;
                 }
 
                 if (this.TokenList[index + 1] != "(")
@@ -177,8 +275,10 @@ namespace ConverterTool.LanguageRules
                     index = this.BuildFunction(index, contentObject);
                 }
 
-                classObject.Value.Add(contentObject);
+                classContent.Value.Add(contentObject);
             }
+
+            classObject.Value.Add(classContent);
 
             return index;
         }
@@ -457,15 +557,6 @@ namespace ConverterTool.LanguageRules
                 }
             }
             return index;
-        }
-
-        public override void ParseFile()
-        {
-            Log.Info("Staring to Parse Java file.");
-            int index = 0;
-            index = this.AddHeader(index);
-            _ = this.AddClass(index);
-            Log.Success("Parsing Java file is Completed.");
         }
 
         private string CleanSourceCode()

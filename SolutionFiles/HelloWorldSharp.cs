@@ -6,56 +6,6 @@ using Values;
 
 namespace HelloWorldSharp
 {
-    public struct WesMan
-    {
-        private struct Bean
-        {
-            public Bean(int asdf, int fdsa)
-            {
-
-            }
-        }
-
-        public enum BBB
-        {
-            HAHA,
-            HEHE,
-        }
-
-        public class Wows
-        {
-            public Wow()
-            {
-
-            }
-        }
-        public static string Asdf {get; set;}
-        private static string Fdsa { get; set; }
-        public WesMan(int asdf, int fdsa)
-        {
-
-        }
-
-        public void GetMeThatThang()
-        { 
-            var moString = Asdf + Fdsa;
-        }
-    }
-
-    public struct Welsey
-    {
-        public int BeansWesLikes {get;set;}
-        public Welsey(int bean)
-        {
-            this.BeansWesLikes = bean;
-        }
-    }
-
-    public enum OterEnum {
-        FFFF,
-        AAAA
-    }
-    
     public static class Program
     {
         // this is going to be a problem...
@@ -65,20 +15,35 @@ namespace HelloWorldSharp
         
         public static void Main(string[] args)
         {
-            this._randomMessage = "This thing is going to be hard"; // or isssss it?!?!?
-            PrintMessage(3);    /* this is going to read the message */
-            Console.WriteLine(RandomMessage);
-            /*
-            asdfasdfasdfasdf fdsa
-            asdf
-            fdsa
-            asdf
-            fdsa
-            asdf
-            */
-            Values asdf = new Values(123);
-            asdf.Value2 = "asdf";
-            Console.WriteLine(asdf.Value);
+            try
+            {
+                this._randomMessage = "This thing is going to be hard"; // or isssss it?!?!?
+                PrintMessage(3);    /* this is going to read the message */
+                Console.WriteLine(RandomMessage);
+                /*
+                asdfasdfasdfasdf fdsa
+                asdf
+                fdsa
+                asdf
+                fdsa
+                asdf
+                */
+                Values asdf = new Values(123);
+                asdf.Value2 = "asdf";
+                Console.WriteLine(asdf.Value);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                int p = 0;
+                do
+                {
+                    Console.WriteLine(p++);
+                } while (p < 10);
+            }
         }
 
         public static string GetRandomMessage()
@@ -145,5 +110,55 @@ namespace HelloWorldSharp
                     break;
             }
         }
+    }
+
+    public struct WesMan
+    {
+        private struct Bean
+        {
+            public Bean(int asdf, int fdsa)
+            {
+
+            }
+        }
+
+        public enum BBB
+        {
+            HAHA,
+            HEHE,
+        }
+
+        public class Wows
+        {
+            public Wow()
+            {
+
+            }
+        }
+        public static string Asdf {get; set;}
+        private static string Fdsa { get; set; }
+        public WesMan(int asdf, int fdsa)
+        {
+
+        }
+
+        public void GetMeThatThang()
+        { 
+            var moString = Asdf + Fdsa;
+        }
+    }
+
+    public struct Welsey
+    {
+        public int BeansWesLikes {get;set;}
+        public Welsey(int bean)
+        {
+            this.BeansWesLikes = bean;
+        }
+    }
+
+    public enum OterEnum {
+        FFFF,
+        AAAA
     }
 }

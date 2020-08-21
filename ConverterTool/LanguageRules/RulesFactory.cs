@@ -1,9 +1,10 @@
-﻿using ConverterTool.LanguageRules;
-using ConverterTool.Logger;
+﻿using ConverterTool.Logger;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
-namespace ConverterTool
+namespace ConverterTool.LanguageRules
 {
     internal static class RulesFactory
     {

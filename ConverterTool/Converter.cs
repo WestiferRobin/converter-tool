@@ -12,27 +12,25 @@ namespace ConverterTool
         // configuration for application to run
 
         // include configuration
-        internal static void RunTool(string source, string target)
-        {
-            ConvertSourceFile(source);
-            CreateTargetFile(target);
-        }
-
-        private static void ConvertSourceFile(string sourceFile)
+        internal static void RunTool(string sourceFile, string targetFile)
         {
             // Define the type of Rules by language type
             sourceRules = RulesFactory.GenerateRule(sourceFile);
+            targetRules = RulesFactory.GenerateRule(targetFile);
 
+            ConvertSourceFile();
+            CreateTargetFile();
+        }
+
+        private static void ConvertSourceFile()
+        {
             // Divide and organize Tokens and such
             sourceRules.ScanFile();
             sourceRules.ParseFile();
         }
 
-        private static void CreateTargetFile(string targetFile)
+        private static void CreateTargetFile()
         {
-            // Define rules of the language type 
-            targetRules = RulesFactory.GenerateRule(targetFile);
-
             // compare source to target
             if (targetRules.TypeOfLanguage == sourceRules.TypeOfLanguage && targetRules.ProgramTypeLanguage != sourceRules.ProgramTypeLanguage)
             {

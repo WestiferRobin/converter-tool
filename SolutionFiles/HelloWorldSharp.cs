@@ -38,12 +38,14 @@ namespace HelloWorldSharp
             }
             finally
             {
-                int p = 0;
-                do
-                {
-                    Console.WriteLine(p++);
-                } while (p < 10);
+                Console.WriteLine("ASDFASDF");
             }
+            
+            int p = 0;
+            do
+            {
+                Console.WriteLine(p++);
+            } while (p < 10);
         }
 
         public static string GetRandomMessage()

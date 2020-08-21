@@ -30,7 +30,7 @@ namespace ConverterTool.LanguageRules
 
         private int AddHeader(int index)
         {
-            var otherHeaders = new WrapperObject("HEADERS", new List<WrapperType>());
+            var otherHeaders = new WrapperObject("HEADERS");
 
             // TODO: make sure to implement this while multi file task
             while ((this.TokenList[index].ToLower() != "class" && this.TokenList[index].ToLower() != "enum") &&
@@ -72,10 +72,10 @@ namespace ConverterTool.LanguageRules
 
         private int Start(int index)
         {
-            WrapperObject wholeFile = new WrapperObject("WHOLE_FILE", new List<WrapperType>());
+            WrapperObject wholeFile = new WrapperObject("WHOLE_FILE");
             while (index < this.TokenList.Count)
             {
-                WrapperObject potentialObject = new WrapperObject(string.Empty, new List<WrapperType>());
+                WrapperObject potentialObject = new WrapperObject();
 
                 if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
@@ -153,7 +153,7 @@ namespace ConverterTool.LanguageRules
         private int BuildEnumContent(int index, WrapperObject enumObject)
         {
             int times = 0;
-            WrapperObject enumContent = new WrapperObject("ENUM_CONTENT", new List<WrapperType>());
+            WrapperObject enumContent = new WrapperObject("ENUM_CONTENT");
 
             while (this.TokenList[index] != "}")
             {
@@ -179,10 +179,10 @@ namespace ConverterTool.LanguageRules
 
         private int BuildClassContent(int index, WrapperObject classObject)
         {
-            WrapperObject classContent = new WrapperObject("OBJECT_CONTENT", new List<WrapperType>());
+            WrapperObject classContent = new WrapperObject("OBJECT_CONTENT");
             while (this.TokenList[index] != "}")
             {
-                WrapperObject contentObject = new WrapperObject(string.Empty, new List<WrapperType>());
+                WrapperObject contentObject = new WrapperObject();
 
                 if (RulesUtility.ValidAccessModifiers(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
@@ -310,13 +310,13 @@ namespace ConverterTool.LanguageRules
         private int BuildFunction(int index, WrapperObject functionObject)
         {
             int holderValue = 1;
-            WrapperObject parameters = new WrapperObject("PARAMETERS", new List<WrapperType>());
+            WrapperObject parameters = new WrapperObject("PARAMETERS");
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "(", "This needs is a valid \'(\'.", index);
 
             while (this.TokenList[index] != ")")
             {
-                WrapperObject parameter = new WrapperObject($"PARAMETER_{holderValue++}", new List<WrapperType>());
+                WrapperObject parameter = new WrapperObject($"PARAMETER_{holderValue++}");
                 if (RulesUtility.IsValidType(this.ProgramTypeLanguage, this.TokenList[index]))
                 {
                     string valueName = this.TokenList[index++];
@@ -344,7 +344,7 @@ namespace ConverterTool.LanguageRules
 
             index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
-            WrapperObject functionContent = new WrapperObject("FUNCTION_CONTENT", new List<WrapperType>());
+            WrapperObject functionContent = new WrapperObject("FUNCTION_CONTENT");
 
             index = this.FillFunctionContent(index, functionContent);
 
@@ -367,7 +367,7 @@ namespace ConverterTool.LanguageRules
 
         private int FillSwitchStatement(int index, WrapperObject wrapperObject)
         {
-            WrapperObject cases = new WrapperObject("CASES", new List<WrapperType>());
+            WrapperObject cases = new WrapperObject("CASES");
             int caseCount = 1;
 
             index = this.FillConditionalStatement(index, wrapperObject);
@@ -379,8 +379,8 @@ namespace ConverterTool.LanguageRules
                 {
                     case "case":
                         List<WrapperType> instantCases = new List<WrapperType>();
-                        WrapperObject thisCase = new WrapperObject($"CASE_{caseCount++}", new List<WrapperType>());
-                        WrapperObject caseContent = new WrapperObject("CASE_CONTENT", new List<WrapperType>());
+                        WrapperObject thisCase = new WrapperObject($"CASE_{caseCount++}");
+                        WrapperObject caseContent = new WrapperObject("CASE_CONTENT");
 
                         index = RulesUtility.ValidateToken(this.TokenList[index], "case", "This needs is a valid \'case\'.", index);
                         string caseValue = string.Empty;
@@ -394,7 +394,7 @@ namespace ConverterTool.LanguageRules
 
                         while (this.TokenList[index] == "case")
                         {
-                            WrapperObject otherCase = new WrapperObject($"CASE_{caseCount++}", new List<WrapperType>());
+                            WrapperObject otherCase = new WrapperObject($"CASE_{caseCount++}");
                             index = RulesUtility.ValidateToken(this.TokenList[index], "case", "This needs is a valid \'case\'.", index);
                             string multiCaseValue = string.Empty;
                             while (this.TokenList[index] != ":")
@@ -417,8 +417,8 @@ namespace ConverterTool.LanguageRules
                         }
                         break;
                     case "default":
-                        WrapperObject defaultCase = new WrapperObject($"DEFAULT", new List<WrapperType>());
-                        WrapperObject defaultContent = new WrapperObject("DEFAULT_CONTENT", new List<WrapperType>());
+                        WrapperObject defaultCase = new WrapperObject($"DEFAULT");
+                        WrapperObject defaultContent = new WrapperObject("DEFAULT_CONTENT");
 
                         index = RulesUtility.ValidateToken(this.TokenList[index], "default", "This needs is a valid \'default\'.", index);
                         index = RulesUtility.ValidateToken(this.TokenList[index], ":", "This needs is a valid \':\'.", index);
@@ -463,7 +463,7 @@ namespace ConverterTool.LanguageRules
             return index;
         }
 
-        private int FillFunctionContent(int index, WrapperObject functionContent, bool isSwitchStatement = true)
+        private int FillFunctionContent(int index, WrapperObject functionContent, bool isNormalStatement = true)
         {
             int counter = 1;
             int whileLoopCount = 1;
@@ -472,8 +472,10 @@ namespace ConverterTool.LanguageRules
             int ifElseCount = 1;
             int elseCount = 1;
             int switchCount = 1;
+            int doCount = 1;
+            int tryCount = 1;
 
-            string endingToken = isSwitchStatement ? "}" : "break";
+            string endingToken = isNormalStatement ? "}" : "break";
 
             while (this.TokenList[index] != endingToken)
             {
@@ -484,7 +486,7 @@ namespace ConverterTool.LanguageRules
                 {
                     case "for":
                         index = RulesUtility.ValidateToken(this.TokenList[index], "for", "This needs is a valid \'for\'.", index);
-                        WrapperObject forObject = new WrapperObject($"FOR_{forLoopCount++}", new List<WrapperType>());
+                        WrapperObject forObject = new WrapperObject($"FOR_{forLoopCount++}");
 
                         index = this.FillBracketStatement(index, forObject);
 
@@ -492,7 +494,7 @@ namespace ConverterTool.LanguageRules
                         break;
                     case "while":
                         index = RulesUtility.ValidateToken(this.TokenList[index], "while", "This needs is a valid \'while\'.", index);
-                        WrapperObject whileObject = new WrapperObject($"WHILE_{whileLoopCount++}", new List<WrapperType>());
+                        WrapperObject whileObject = new WrapperObject($"WHILE_{whileLoopCount++}");
 
                         index = this.FillBracketStatement(index, whileObject);
 
@@ -501,7 +503,7 @@ namespace ConverterTool.LanguageRules
                     case "if":
                         index = RulesUtility.ValidateToken(this.TokenList[index], "if", "This needs is a valid \'if\'.", index);
 
-                        WrapperObject ifObject = new WrapperObject($"IF_{ifCount++}", new List<WrapperType>());
+                        WrapperObject ifObject = new WrapperObject($"IF_{ifCount++}");
 
                         index = this.FillBracketStatement(index, ifObject);
 
@@ -513,7 +515,7 @@ namespace ConverterTool.LanguageRules
                         if (this.TokenList[index].ToLower() == "if")
                         {
                             index = RulesUtility.ValidateToken(this.TokenList[index], "if", "This needs is a valid \'if\'.", index);
-                            WrapperObject elseIfObject = new WrapperObject($"ELSE_IF_{ifElseCount++}", new List<WrapperType>());
+                            WrapperObject elseIfObject = new WrapperObject($"ELSE_IF_{ifElseCount++}");
 
                             index = this.FillBracketStatement(index, elseIfObject);
 
@@ -521,7 +523,7 @@ namespace ConverterTool.LanguageRules
                         }
                         else
                         {
-                            WrapperObject elseObject = new WrapperObject($"ELSE_{elseCount++}", new List<WrapperType>());
+                            WrapperObject elseObject = new WrapperObject($"ELSE_{elseCount++}");
 
                             index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
                             index = this.FillFunctionContent(index, elseObject);
@@ -533,11 +535,29 @@ namespace ConverterTool.LanguageRules
                     case "switch":
                         index = RulesUtility.ValidateToken(this.TokenList[index], "switch", "This needs is a valid \'switch\'.", index);
 
-                        WrapperObject switchObject = new WrapperObject($"SWITCH_{switchCount++}", new List<WrapperType>());
+                        WrapperObject switchObject = new WrapperObject($"SWITCH_{switchCount++}");
 
                         index = this.FillSwitchStatement(index, switchObject);
 
                         functionContent.Value.Add(switchObject);
+                        break;
+                    case "do":
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "do", "This needs is a valid \'do\'.", index);
+
+                        WrapperObject doObject = new WrapperObject($"DO_{doCount++}");
+
+                        index = this.FillDoWhile(index, doObject);
+
+                        functionContent.Value.Add(doObject);
+                        break;
+                    case "try":
+                        index = RulesUtility.ValidateToken(this.TokenList[index], "try", "This needs is a valid \'try\'.", index);
+
+                        WrapperObject tryObject = new WrapperObject($"TRY_{tryCount++}");
+
+                        index = this.FillTryCatch(index, tryObject);
+
+                        functionContent.Value.Add(tryObject);
                         break;
                     default:
                         while (this.TokenList[index] != ";")
@@ -558,6 +578,98 @@ namespace ConverterTool.LanguageRules
             }
             return index;
         }
+
+
+        private int FillDoWhile(int index, WrapperObject doObject)
+        {
+            WrapperObject doContentObject = new WrapperObject("DO_CONTENT");
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+            index = this.FillFunctionContent(index, doContentObject);
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+
+            WrapperString whileCond = new WrapperString("WHILE_COND", string.Empty);
+            index = RulesUtility.ValidateToken(this.TokenList[index], "while", "This needs is a valid \'while\'.", index);
+            while (this.TokenList[index] != ")")
+            {
+                string lookAhead = this.TokenList[index + 1];
+                whileCond.Value += this.TokenList[index];
+                if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                    && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                    && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                    whileCond.Value += " ";
+                index++;
+            }
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
+            whileCond.Value += ")";
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], ";", "This needs is a valid \';\'.", index);
+            whileCond.Value += ";";
+
+            doObject.Value.Add(doContentObject);
+            doObject.Value.Add(whileCond);
+            return index;
+        }
+
+        private int FillTryCatch(int index, WrapperObject mainTryObject)
+        {
+            WrapperObject tryBlockObject = new WrapperObject("TRY_CONTENT");
+
+            index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+            index = this.FillFunctionContent(index, tryBlockObject);
+            index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+
+            mainTryObject.Value.Add(tryBlockObject);
+
+            if (this.TokenList[index] == "catch")
+            {
+                WrapperObject catchBlockObject = new WrapperObject("CATCH_CONTENT");
+
+                index = RulesUtility.ValidateToken(this.TokenList[index], "catch", "This needs is a valid \'catch\'.", index);
+
+                if (this.TokenList[index] == "(")
+                {
+                    string exStatement = string.Empty;
+
+                    while (this.TokenList[index] != ")")
+                    {
+                        string lookAhead = this.TokenList[index + 1];
+                        exStatement += this.TokenList[index];
+                        if (lookAhead != "." && lookAhead != "(" && lookAhead != ")" && lookAhead != "\'" && lookAhead != ";"
+                            && this.TokenList[index] != "." && this.TokenList[index] != "(" && this.TokenList[index] != ")"
+                            && this.TokenList[index] != "\"" && this.TokenList[index] != "\'")
+                            exStatement += " ";
+                        index++;
+                    }
+
+                    index = RulesUtility.ValidateToken(this.TokenList[index], ")", "This needs is a valid \')\'.", index);
+                    exStatement += ")";
+
+                    catchBlockObject.Value.Add(new WrapperString("CATCH_COND", exStatement));
+                }
+
+                index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+                index = this.FillFunctionContent(index, catchBlockObject);
+                index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+
+                mainTryObject.Value.Add(catchBlockObject);
+            }
+
+            if (this.TokenList[index] == "finally")
+            {
+                WrapperObject finallyObject = new WrapperObject("FINALLY_CONTENT");
+
+                index = RulesUtility.ValidateToken(this.TokenList[index], "finally", "This needs is a valid \'finally\'.", index);
+                index = RulesUtility.ValidateToken(this.TokenList[index], "{", "This needs is a valid \'{\'.", index);
+                index = this.FillFunctionContent(index, finallyObject);
+                index = RulesUtility.ValidateToken(this.TokenList[index], "}", "This needs is a valid \'}\'.", index);
+
+                mainTryObject.Value.Add(finallyObject);
+            }
+
+            return index;
+        }
+
 
         private string CleanSourceCode()
         {

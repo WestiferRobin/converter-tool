@@ -12,6 +12,16 @@ namespace ConverterTool.WrapperTypes
             this.Value = value;
         }
 
+        public WrapperObject(string wrapperName) : base(wrapperName)
+        {
+            this.Value = new List<WrapperType>();
+        }
+
+        public WrapperObject() : base(string.Empty)
+        {
+            this.Value = new List<WrapperType>();
+        }
+
         public List<string> GetKeys()
         {
             List<string> ans = new List<string>();

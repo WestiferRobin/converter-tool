@@ -41,17 +41,30 @@ public class HelloWorldJ
     
     public static void main(String[] args)
     {
-        setRandomMessage("This thing is going to be hard"); // or isssss it?!?!?
-        printMessage(5);    /* this is going to read the message */
-        System.out.println(getRandomMessage());
-        /*
-            asdfasdfasdfasdf fdsa
-            asdf
-            fdsa
-            asdf
-            fdsa
-            asdf
-            */
+        try 
+        {
+            setRandomMessage("This thing is going to be hard"); // or isssss it?!?!?
+            printMessage(5);    /* this is going to read the message */
+            System.out.println(getRandomMessage());
+            /*
+                asdfasdfasdfasdf fdsa
+                asdf
+                fdsa
+                asdf
+                fdsa
+                asdf
+                */
+        } 
+        catch (Exception e) 
+        {
+            System.out.println("Wesley Webb");
+        }
+
+        int p = 0;
+        do
+        {
+            System.out.println(p++);
+        } while (p < 10);
     }
 
     public static void printMessage(int size)

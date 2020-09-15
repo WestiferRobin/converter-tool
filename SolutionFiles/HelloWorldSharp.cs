@@ -6,6 +6,10 @@ using Values;
 
 namespace HelloWorldSharp
 {
+    public abstract class Thang
+    {
+        abstract void WhatThang();
+    }
     public static class Program
     {
         // this is going to be a problem...
@@ -46,6 +50,11 @@ namespace HelloWorldSharp
             {
                 Console.WriteLine(p++);
             } while (p < 10);
+        }
+
+        public virtual static void DoSomthingCool()
+        {
+            Console.WriteLine("Hello there");
         }
 
         public static string GetRandomMessage()

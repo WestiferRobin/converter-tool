@@ -61,6 +61,7 @@ namespace ConverterTool.LanguageRules
 
         private int AddNamespace(int index)
         {
+            // TODO: FIGURE THIS WITH CLASS AND STRUCTURE AND SHIT
             var namespaceObject = new WrapperObject();
 
             index = RulesUtility.ValidateToken(this.TokenList[index], "namespace", "This is not an accurate namespace.", index);
@@ -83,6 +84,17 @@ namespace ConverterTool.LanguageRules
                 else
                 {
                     potentialObject.Value.Add(new WrapperString("ACCESS_MOD", "public"));
+                }
+
+                if (this.TokenList[index].ToLower() == "abstract"
+                    || this.TokenList[index].ToLower() == "override"
+                    || this.TokenList[index].ToLower() == "virtual")
+                {
+                    potentialObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
+                }
+                else
+                {
+                    potentialObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
                 }
 
                 if (this.TokenList[index].ToLower() == "static")
@@ -186,8 +198,19 @@ namespace ConverterTool.LanguageRules
                 }
                 else
                 {
-                    var classObjectAccessMod = (WrapperString)contentObject.GetValue("ACCESS_MOD");
+                    var classObjectAccessMod = (WrapperString)classObject.GetValue("ACCESS_MOD");
                     contentObject.Value.Add(new WrapperString("ACCESS_MOD", classObjectAccessMod.Value));
+                }
+
+                if (this.TokenList[index].ToLower() == "abstract"
+                    || this.TokenList[index].ToLower() == "override"
+                    || this.TokenList[index].ToLower() == "virtual")
+                {
+                    contentObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
+                }
+                else
+                {
+                    contentObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
                 }
 
                 if (this.TokenList[index].ToLower() == "static")

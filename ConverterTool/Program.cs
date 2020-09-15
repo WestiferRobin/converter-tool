@@ -56,10 +56,10 @@ namespace ConverterTool
                 else
                 {
                     bool shouldUseMain = true;
-                    //sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
-                    //targetFile = string.Concat(filePath, @"OUTPUT\OutputJV.java");
-                    sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldJ.java" : "Value.java");
-                    targetFile = string.Concat(filePath, @"OUTPUT\OutputCS.cs");
+                    sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
+                    targetFile = string.Concat(filePath, @"OUTPUT\OutputJV.java");
+                    //sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldJ.java" : "Value.java");
+                    //targetFile = string.Concat(filePath, @"OUTPUT\OutputCS.cs");
 
                     Log.Info("Conversion Tool is now running.");
 

@@ -92,10 +92,6 @@ namespace ConverterTool.LanguageRules
                 {
                     potentialObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
                 }
-                else
-                {
-                    potentialObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
-                }
 
                 if (this.TokenList[index].ToLower() == "static")
                 {
@@ -205,10 +201,6 @@ namespace ConverterTool.LanguageRules
                 if (this.TokenList[index].ToLower() == "abstract"
                     || this.TokenList[index].ToLower() == "override"
                     || this.TokenList[index].ToLower() == "virtual")
-                {
-                    contentObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
-                }
-                else
                 {
                     contentObject.Value.Add(new WrapperString("UNIQUE_MOD", this.TokenList[index++].ToLower()));
                 }
@@ -933,7 +925,7 @@ namespace ConverterTool.LanguageRules
                     continue;
                 }
                 hold += fileContents[index];
-                if (this.IsValidKeyword(hold.ToLower()))
+                if (this.IsValidKeyword(hold.ToLower()) && !(char.IsLetter(fileContents[index+1]) || char.IsDigit(fileContents[index+1])))
                 {
                     if (!string.IsNullOrEmpty(hold) && !string.IsNullOrWhiteSpace(hold))
                     {
@@ -999,11 +991,11 @@ namespace ConverterTool.LanguageRules
             };
             this.WarningKeywords = new List<string>()
             {
-                //"as",
+                "as",
                 "foreach",
                 "goto",
-                //"in",
-                //"internal",
+                "in",
+                "internal",
                 "object",
                 "readonly",
                 "sbyte",

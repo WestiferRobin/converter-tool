@@ -765,7 +765,7 @@ namespace ConverterTool.LanguageRules
                     continue;
                 }
                 hold += fileContents[index];
-                if (this.IsValidKeyword(hold.ToLower()))
+                if (this.IsValidKeyword(hold.ToLower()) && !(char.IsLetter(fileContents[index + 1]) || char.IsDigit(fileContents[index + 1])))
                 {
                     if (!string.IsNullOrEmpty(hold) && !string.IsNullOrWhiteSpace(hold))
                     {

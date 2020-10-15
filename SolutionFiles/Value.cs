@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HelloWorldSharp.Values
 {
-    public class Values<T>
+    public abstract class Values<T>
     {
         private static int _randomNumber = 234;
         private static const int CONST_NUMBER = 777;
@@ -24,6 +24,11 @@ namespace HelloWorldSharp.Values
         public string Value3 {set;get;}
         public Values(string datValue, T asdf)
         {
+            string forThing = "asdf";
+            for (int i=0; i<4; i++)
+            {
+                int intNum = i;
+            }
             _someT = asdf;
             this.Value1 = datValue;
             this.Value2 = "asdf";

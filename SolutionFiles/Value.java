@@ -11,6 +11,11 @@ public class Value<T>
 
     public Value(String value, T asdf)
     {
+        String forThing = "asdf";
+        for (int i=0; i<4; i++)
+        {
+            int intNum = i;
+        }
         this._value = value;
         this._thisT = T;
     }

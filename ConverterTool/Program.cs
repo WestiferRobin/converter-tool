@@ -55,7 +55,7 @@ namespace ConverterTool
                 }
                 else
                 {
-                    bool shouldUseMain = true;
+                    bool shouldUseMain = false;
                     sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldSharp.cs" : "Value.cs");
                     targetFile = string.Concat(filePath, @"OUTPUT\OutputJV.java");
                     //sourceFile = string.Concat(filePath, shouldUseMain ? "HelloWorldJ.java" : "Value.java");

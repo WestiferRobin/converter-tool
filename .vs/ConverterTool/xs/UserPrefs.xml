@@ -1,19 +1,19 @@
 ﻿<Properties StartupConfiguration="{AAE7CA95-2EDE-4307-AB5B-19FAAA4CF789}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/LanguageRules/JavaRule.cs">
+  <MonoDevelop.Ide.ItemProperties.ConverterToolTests FirstBuild="True" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterToolTests/CsharpTests.cs">
     <Files>
-      <File FileName="ConverterTool/Program.cs" Line="60" Column="21" />
-      <File FileName="ConverterTool/Converter.cs" Line="29" Column="1" />
-      <File FileName="ConverterTool/LanguageRules/JavaRule.cs" Line="147" Column="1" />
+      <File FileName="ConverterToolTests/JsonTests.cs" Line="23" Column="17" />
+      <File FileName="ConverterToolTests/XmlTests.cs" Line="18" Column="18" />
+      <File FileName="ConverterToolTests/JavaTests.cs" Line="17" Column="9" />
+      <File FileName="ConverterToolTests/CsharpTests.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="ConverterTool" expanded="True">
-            <Node name="ConverterTool" expanded="True">
-              <Node name="LanguageRules" expanded="True">
-                <Node name="JavaRule.cs" selected="True" />
-              </Node>
-              <Node name="WrapperTypes" expanded="True" />
+            <Node name="ConverterTool" expanded="True" />
+            <Node name="ConverterToolTests" expanded="True">
+              <Node name="CsharpTests.cs" selected="True" />
             </Node>
           </Node>
         </State>
@@ -29,7 +29,6 @@
       <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/JavaRule.cs" relfile="ConverterTool/LanguageRules/JavaRule.cs" line="434" column="1" />
       <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/CsharpRule.cs" relfile="ConverterTool/LanguageRules/CsharpRule.cs" line="549" column="1" />
       <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/CsharpRule.cs" relfile="ConverterTool/LanguageRules/CsharpRule.cs" line="157" column="1" />
-      <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/JavaRule.cs" relfile="ConverterTool/LanguageRules/JavaRule.cs" line="147" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />

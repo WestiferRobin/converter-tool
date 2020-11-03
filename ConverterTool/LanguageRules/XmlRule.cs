@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ConverterTool.LanguageRules
 {
-    internal class XmlRule : LanguageRule
+    public class XmlRule : LanguageRule
     {
         private const string XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
@@ -257,22 +257,22 @@ namespace ConverterTool.LanguageRules
                 switch (node)
                 {
                     case WrapperArray wrapperArray:
-                        BuildArray(wrapperArray, tabs + "\t");
+                        BuildArray(wrapperArray, tabs + "\r");
                         break;
                     case WrapperObject wrapperObject:
-                        BuildObject(wrapperObject, tabs + "\t");
+                        BuildObject(wrapperObject, tabs + "\r");
                         break;
                     case WrapperBool wrapperBool:
-                        this.Results += $"{tabs + "\t"}<{wrapperBool.WrapperName}>{wrapperBool.Value}</{wrapperBool.WrapperName}>\n";
+                        this.Results += $"{tabs + "\r"}<{wrapperBool.WrapperName}>{wrapperBool.Value}</{wrapperBool.WrapperName}>\n";
                         break;
                     case WrapperDouble wrapperDouble:
-                        this.Results += $"{tabs + "\t"}<{wrapperDouble.WrapperName}>{wrapperDouble.Value}</{wrapperDouble.WrapperName}>\n";
+                        this.Results += $"{tabs + "\r"}<{wrapperDouble.WrapperName}>{wrapperDouble.Value}</{wrapperDouble.WrapperName}>\n";
                         break;
                     case WrapperInt wrapperInt:
-                        this.Results += $"{tabs + "\t"}<{wrapperInt.WrapperName}>{wrapperInt.Value}</{wrapperInt.WrapperName}>\n";
+                        this.Results += $"{tabs + "\r"}<{wrapperInt.WrapperName}>{wrapperInt.Value}</{wrapperInt.WrapperName}>\n";
                         break;
                     case WrapperString wrapperString:
-                        this.Results += $"{tabs + "\t"}<{wrapperString.WrapperName}>{wrapperString.Value}</{wrapperString.WrapperName}>\n";
+                        this.Results += $"{tabs + "\r"}<{wrapperString.WrapperName}>{wrapperString.Value}</{wrapperString.WrapperName}>\n";
                         break;
                     default:
                         throw new Exception("This type is invalid for build the file.");
@@ -290,7 +290,7 @@ namespace ConverterTool.LanguageRules
                 {
                     case WrapperObject wrapperObject:
                         wrapperObject.WrapperName = mainNode.WrapperName;
-                        BuildObject(wrapperObject, tabs + "\t");
+                        BuildObject(wrapperObject, tabs + "\r");
                         break;
                         throw new Exception("This type is invalid for build the file.");
                 }
@@ -317,11 +317,16 @@ namespace ConverterTool.LanguageRules
             // Create a file to write to.
             using (StreamWriter sw = File.CreateText(this.FullFile))
             {
-                string results = this.Results;
-                foreach (var character in results)
+                //string results = this.Results;
+                //foreach (var character in results)
+                //{
+                //    sw.Write(character);
+                //}
+                for (int index = 0; index < this.Results.Length - 1; index++)
                 {
-                    sw.Write(character);
+                    sw.Write(this.Results[index]);
                 }
+
             }
         }
 

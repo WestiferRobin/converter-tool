@@ -6,7 +6,7 @@ using ConverterTool.WrapperTypes;
 
 namespace ConverterTool.LanguageRules
 {
-    internal class CsharpRule : LanguageRule
+    public class CsharpRule : LanguageRule
     {
         private readonly List<string> _autoPropertyList; 
 

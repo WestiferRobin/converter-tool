@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<NestedObject>
+  <object>
+    <name>Mr. Smith</name>
+    <age>22</age>
+    <bdate>UNKNOWN</bdate>
+    <wife>
+      <name>Mrs. Smith</name>
+      <age>21</age>
+      <bdate>UNKNOWN</bdate>
+    </wife>
+    <childrenArray>
+      <children>
+        <name>Andy</name>
+        <hobbiesArray>
+          <hobbies>
+            <hobby>skating</hobby>
+          </hobbies>
+        </hobbiesArray>
+      </children>
+      <children>
+        <name>Katy</name>
+        <hobbiesArray>
+          <hobbies>
+            <hobby>softball</hobby>
+          </hobbies>
+          <hobbies>
+            <hobby>horse ridding</hobby>
+          </hobbies>
+        </hobbiesArray>
+      </children>
+      <children>
+        <name>Jim</name>
+        <hobbiesArray>
+          <hobbies>
+            <hobby>reading</hobby>
+          </hobbies>
+          <hobbies>
+            <hobby>video games</hobby>
+          </hobbies>
+        </hobbiesArray>
+      </children>
+    </childrenArray>
+  </object>
+</NestedObject>

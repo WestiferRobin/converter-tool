@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SimpleObject>
+  <name>John Doe</name>
+  <age>22</age>
+  <float>123.321</float>
+  <bdate>01/11/1998</bdate>
+  <job>
+    <tech>clerk</tech>
+    <years>5</years>
+  </job>
+  <fdsa>False</fdsa>
+  <asdf>True</asdf>
+  <interestArray>
+    <interest>
+      <type>star wars</type>
+    </interest>
+    <interest>
+      <type>guitar</type>
+    </interest>
+  </interestArray>
+  <neg>-123</neg>
+  <neg_doub>-321.123</neg_doub>
+</SimpleObject>

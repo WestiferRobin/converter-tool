@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Solution Files\**" />
+    <EmbeddedResource Remove="Solution Files\**" />
+    <None Remove="Solution Files\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
@@ -14,10 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Solution Files\" />
-    <Folder Include="Solution Files\Csharp Files\" />
-    <Folder Include="Solution Files\Java Files\" />
-    <Folder Include="Solution Files\Xml Files\" />
-    <Folder Include="Solution Files\Json Files\" />
+    <Folder Include="SolutionFiles\CsharpFiles\" />
+    <Folder Include="SolutionFiles\JavaFiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConverterTool\ConverterTool.csproj" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ArrayObjectArray>
+  <ArrayObject>
+    <name>item1</name>
+  </ArrayObject>
+  <ArrayObject>
+    <name>item2</name>
+  </ArrayObject>
+  <ArrayObject>
+    <name>item3</name>
+  </ArrayObject>
+  <ArrayObject>
+    <name>item4</name>
+  </ArrayObject>
+  <ArrayObject>
+    <name>item5</name>
+  </ArrayObject>
+  <ArrayObject>
+    <name>item6</name>
+  </ArrayObject>
+</ArrayObjectArray>

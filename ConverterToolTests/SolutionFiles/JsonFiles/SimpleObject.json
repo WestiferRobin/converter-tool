@@ -1,0 +1,24 @@
+{
+  "name": "John Doe",
+  "age": 22,
+  "float": 123.321,
+  "bdate": "01/11/1998",
+  "job": {
+    "tech": "clerk",
+    "years": 5
+  },
+  "fdsa": false,
+  "asdf": true,
+  "interest": [
+    {
+      "type": "star wars",
+      "id": 0
+    },
+    {
+      "type": "guitar",
+      "id": 1
+    }
+  ],
+  "neg": -123,
+  "neg_doub": -321.123
+}

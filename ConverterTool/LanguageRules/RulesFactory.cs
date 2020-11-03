@@ -6,9 +6,9 @@ using System.Text;
 
 namespace ConverterTool.LanguageRules
 {
-    internal static class RulesFactory
+    public static class RulesFactory
     {
-        internal static LanguageRule GenerateRule(string file)
+        public static LanguageRule GenerateRule(string file)
         {
             string extension = Path.GetExtension(file).ToUpper();
             switch (extension)

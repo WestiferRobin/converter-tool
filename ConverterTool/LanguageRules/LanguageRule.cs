@@ -5,7 +5,7 @@ using System.IO;
 
 namespace ConverterTool.LanguageRules
 {
-    internal abstract class LanguageRule
+    public abstract class LanguageRule
     {
         // Keywords
         protected IList<string> ValidKeywords { get; set; }

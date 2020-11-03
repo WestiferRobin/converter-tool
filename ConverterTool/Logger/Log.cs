@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConverterTool.Logger
 {
-    internal static class Log
+    public static class Log
     {
         public static void Info(string message)
         {

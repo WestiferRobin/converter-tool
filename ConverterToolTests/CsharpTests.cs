@@ -10,25 +10,71 @@ namespace ConverterToolTests
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void SimpleClass()
         {
         }
 
-        /*
-            TODO:
-                - Test Simple Class/Structs
-                - Test Simple Enum
-                - Test Nested Classes
-                - Test Multi Classes
-                - Test Nested Enums
-                - Test Combination of Enums and Class/Structs
-                - Test Methods
-                - Test Properties
-                - Test AutoProperties
-                - Test Constructors
-                - Test Combination of Methods, Properties, Constructors
-                - Test Operators (math, loops, and etc)
-                - Multi Files
-        */
+        [TestMethod]
+        public void SimpleEnum()
+        {
+        }
+
+        [TestMethod]
+        public void NestedClasses()
+        {
+        }
+
+        [TestMethod]
+        public void MultiClasses()
+        {
+        }
+
+        [TestMethod]
+        public void NestedEnums()
+        {
+        }
+
+        [TestMethod]
+        public void CombinedEnumsAndClasses()
+        {
+        }
+
+        [TestMethod]
+        public void SimpleMethods()
+        {
+        }
+
+        [TestMethod]
+        public void SimpleProperties()
+        {
+        }
+
+        [TestMethod]
+        public void AutoProperties()
+        {
+        }
+
+        [TestMethod]
+        public void SimpleConstructors()
+        {
+        }
+
+        [TestMethod]
+        public void NormalClass()
+        {
+            //-Test Combination of Methods, Properties, Constructors
+        }
+
+        [TestMethod]
+        public void SimpleOperators()
+        {
+
+        }
+
+        [TestMethod]
+        public void MultiFiles()
+        {
+
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ConverterTool.LanguageRules
 {
-    internal class JsonRule : LanguageRule
+    public class JsonRule : LanguageRule
     {
         public JsonRule(string filename) : base(LanguageType.MARKUP_LANG, ProgramType.JSON, filename)
         {

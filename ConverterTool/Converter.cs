@@ -1,9 +1,11 @@
 ﻿using ConverterTool.LanguageRules;
+using ConverterTool.Logger;
 using System;
+using System.IO;
 
 namespace ConverterTool
 {
-    internal static class Converter
+    public static class Converter
     {
         // LanguageRules for source and target files
         private static LanguageRule sourceRules;
@@ -12,14 +14,19 @@ namespace ConverterTool
         // configuration for application to run
 
         // include configuration
-        internal static void RunTool(string sourceFile, string targetFile)
+        public static void RunTool(string sourceFile, string targetFile)
         {
+            Log.Info("Conversion Tool is now running.");
+
             // Define the type of Rules by language type
             sourceRules = RulesFactory.GenerateRule(sourceFile);
             targetRules = RulesFactory.GenerateRule(targetFile);
 
             ConvertSourceFile();
             CreateTargetFile();
+
+            // Convert target file to Desired file.
+            Log.Success($"File is converted. Please check {Path.GetFileName(targetFile)}.");
         }
 
         private static void ConvertSourceFile()

@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ConverterTool.LanguageRules
 { 
-    internal class JavaRule : LanguageRule
+    public class JavaRule : LanguageRule
     {
         private bool _isOneClass = false;
         public JavaRule(string filename) : base(LanguageType.PROGRAM_LANG, ProgramType.JAVA, filename)

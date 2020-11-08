@@ -1,9 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 using ConverterTool;
 using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
 
 namespace ConverterToolTests
 {
@@ -13,7 +11,6 @@ namespace ConverterToolTests
         public JsonTests() : base("JsonFiles")
         {
         }
-
 
         [TestMethod]
         public void SimpleObject()
@@ -30,21 +27,12 @@ namespace ConverterToolTests
             this.SetBaselinePath("XmlFiles");
             this.BaselinePath = Path.Combine(this.BaselinePath, "SimpleObject.xml");
 
-
-            // TODO:
-            //  - Figure out the problem on why this is occuring.
-
             var startObject = File.ReadAllText(outputFile);
             var outputObject = File.ReadAllText(this.BaselinePath);
-
-            //startObject = startObject.Replace("\t", string.Empty);
-            //outputObject = outputObject.Replace("\r", string.Empty);
 
             bool isEqual = startObject.Length == outputObject.Length;
             for (int index = 0; index < outputObject.Length; index++)
             {
-                var asdf = (char)startObject[index];
-                var fdsa = (char)outputObject[index];
                 if (startObject[index] != outputObject[index])
                 {
                     isEqual = false;
@@ -73,7 +61,7 @@ namespace ConverterToolTests
             this.BaselinePath = Path.Combine(this.BaselinePath, "SimpleObject.xml");
 
             var startObject = File.ReadAllBytes(outputFile);
-            var outputObject = File.ReadAllBytes(outputFile);
+            var outputObject = File.ReadAllBytes(this.BaselinePath);
 
             bool isEqual = startObject.Length == outputObject.Length;
             for (int index = 0; index < outputObject.Length; index++)
@@ -101,6 +89,24 @@ namespace ConverterToolTests
             File.Copy(Path.Combine(SolutionPath, "NestedObject.json"), startFile);
 
             Converter.RunTool(startFile, outputFile);
+
+            this.SetBaselinePath("XmlFiles");
+            this.BaselinePath = Path.Combine(this.BaselinePath, "NestedObject.xml");
+
+            var startObject = File.ReadAllBytes(startFile);
+            var outputObject = File.ReadAllBytes(this.BaselinePath);
+
+            bool isEqual = startObject.Length == outputObject.Length;
+            for (int index = 0; index < outputObject.Length; index++)
+            {
+                if (startObject[index] != outputObject[index])
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(isEqual);
 
             Cleanup();
         }

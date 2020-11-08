@@ -18,7 +18,7 @@ namespace ConverterToolTests
 
         public TestGeneral(string solutionsFolder)
         {
-            this.IsolatedPath = baseFolder + (isWindows ? @"\FilesInUse\" : "/FilesInUser/" );
+            this.IsolatedPath = baseFolder + (isWindows ? @"\FilesInUse\" : "/FilesInUse/" );
             this.SolutionPath = baseFolder +  (isWindows ? @$"\SolutionFiles\{solutionsFolder}\" : @$"/SolutionFiles/{solutionsFolder}/");
         }
 

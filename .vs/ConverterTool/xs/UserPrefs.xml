@@ -1,21 +1,34 @@
 ﻿<Properties StartupConfiguration="{AAE7CA95-2EDE-4307-AB5B-19FAAA4CF789}|Default">
-  <MonoDevelop.Ide.ItemProperties.ConverterToolTests FirstBuild="True" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterToolTests/CsharpTests.cs">
+  <MonoDevelop.Ide.ItemProperties.ConverterToolTests PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterToolTests/JavaTests.cs">
     <Files>
-      <File FileName="ConverterToolTests/JsonTests.cs" Line="23" Column="17" />
-      <File FileName="ConverterToolTests/XmlTests.cs" Line="18" Column="18" />
-      <File FileName="ConverterToolTests/JavaTests.cs" Line="17" Column="9" />
-      <File FileName="ConverterToolTests/CsharpTests.cs" Line="1" Column="1" />
+      <File FileName="ConverterToolTests/JavaTests.cs" Line="54" Column="21" />
+      <File FileName="ConverterToolTests/SolutionFiles/JavaFiles/StaticClass.java" Line="7" Column="1" />
+      <File FileName="ConverterToolTests/SolutionFiles/JavaFiles/SimpleClass.java" Line="6" Column="2" />
+      <File FileName="ConverterToolTests/SolutionFiles/JavaFiles/AbstractClass.java" Line="8" Column="2" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="ConverterTool" expanded="True">
-            <Node name="ConverterTool" expanded="True" />
+            <Node name="ConverterTool" expanded="True">
+              <Node name="LanguageRules" expanded="True" />
+            </Node>
             <Node name="ConverterToolTests" expanded="True">
-              <Node name="CsharpTests.cs" selected="True" />
+              <Node name="SolutionFiles" expanded="True">
+                <Node name="JavaFiles" expanded="True" />
+              </Node>
+              <Node name="JavaTests.cs" selected="True" />
             </Node>
           </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="ConverterTool" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>
@@ -29,6 +42,8 @@
       <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/JavaRule.cs" relfile="ConverterTool/LanguageRules/JavaRule.cs" line="434" column="1" />
       <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/CsharpRule.cs" relfile="ConverterTool/LanguageRules/CsharpRule.cs" line="549" column="1" />
       <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/LanguageRules/CsharpRule.cs" relfile="ConverterTool/LanguageRules/CsharpRule.cs" line="157" column="1" />
+      <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterToolTests/XmlTests.cs" relfile="ConverterToolTests/XmlTests.cs" line="21" column="1" />
+      <Breakpoint file="/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterToolTests/JavaTests.cs" relfile="ConverterToolTests/JavaTests.cs" line="32" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />

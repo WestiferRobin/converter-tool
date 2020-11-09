@@ -2,10 +2,8 @@
   <MonoDevelop.Ide.ItemProperties.ConverterToolTests PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="ConverterToolTests/JavaTests.cs">
     <Files>
-      <File FileName="ConverterToolTests/JavaTests.cs" Line="54" Column="21" />
-      <File FileName="ConverterToolTests/SolutionFiles/JavaFiles/StaticClass.java" Line="7" Column="1" />
-      <File FileName="ConverterToolTests/SolutionFiles/JavaFiles/SimpleClass.java" Line="6" Column="2" />
-      <File FileName="ConverterToolTests/SolutionFiles/JavaFiles/AbstractClass.java" Line="8" Column="2" />
+      <File FileName="ConverterToolTests/JavaTests.cs" Line="59" Column="10" />
+      <File FileName="ConverterToolTests/CsharpTests.cs" Line="94" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -21,14 +19,6 @@
               <Node name="JavaTests.cs" selected="True" />
             </Node>
           </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
-      <Pad Id="MonoDevelop.UnitTesting.TestPad">
-        <State name="__root__">
-          <Node name="ConverterTool" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>

@@ -42,6 +42,7 @@ namespace ConverterToolTests
             generalTest("SimpleClass");
             generalTest("StaticClass");
             generalTest("AbstractClass");
+            generalTest("Interface");
         }
 
         [TestMethod]
@@ -54,56 +55,49 @@ namespace ConverterToolTests
         [TestMethod]
         public void NestedClasses()
         {
-            generalTest("");
+            generalTest("NestedClasses");
         }
 
         [TestMethod]
-        public void NestedEnums()
+        public void GeneralMethods()
         {
-            generalTest("");
+            generalTest("SimpleMethods");
+            generalTest("StaticMethods");
+            generalTest("AbstractMethods");
+            generalTest("InterfaceMethods");
         }
 
         [TestMethod]
-        public void CombinedEnumsAndClasses()
+        public void GeneralProperties()
         {
-            generalTest("");
+            generalTest("SimpleProperties");
         }
 
         [TestMethod]
-        public void SimpleMethods()
+        public void Inheritance()
         {
-            generalTest("");
+            generalTest("StandardInheritance");
+            generalTest("AbstractInheritance");
+            generalTest("InterfaceInheritance");
         }
 
-        [TestMethod]
-        public void SimpleProperties()
-        {
-            generalTest("");
-        }
 
         [TestMethod]
-        public void SimpleConstructors()
+        public void StressTest()
         {
-            generalTest("");
-        }
-
-        [TestMethod]
-        public void NormalClass()
-        {
-            //-Test Combination of Methods, Properties, Constructors
-            generalTest("");
+            generalTest("StressTest");
         }
 
         [TestMethod]
         public void SimpleOperators()
         {
-            generalTest("");
+            Assert.Inconclusive("Not Ready for Unit Testing");
         }
 
         [TestMethod]
         public void MultiFiles()
         {
-            generalTest("");
+            Assert.Inconclusive("Not Ready for Unit Testing");
         }
     }
 }

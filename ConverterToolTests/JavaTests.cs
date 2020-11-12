@@ -29,7 +29,7 @@ namespace ConverterToolTests
 
                 Converter.RunTool(startFile, outputFile);
 
-                Assert.Inconclusive("Not Ready for Unit Testing");
+                //Assert.Inconclusive("Not Ready for Unit Testing");
 
                 Cleanup();
             }
@@ -48,8 +48,7 @@ namespace ConverterToolTests
         [TestMethod]
         public void SimpleEnum()
         {
-            generalTest("SimpleEnumOutter");
-            generalTest("SimpleEnumInner");
+            generalTest("SimpleEnum");
         }
 
         [TestMethod]
@@ -68,30 +67,11 @@ namespace ConverterToolTests
         }
 
         [TestMethod]
-        public void GeneralProperties()
-        {
-            generalTest("SimpleProperties");
-        }
-
-        [TestMethod]
         public void Inheritance()
         {
             generalTest("StandardInheritance");
             generalTest("AbstractInheritance");
             generalTest("InterfaceInheritance");
-        }
-
-
-        [TestMethod]
-        public void StressTest()
-        {
-            generalTest("StressTest");
-        }
-
-        [TestMethod]
-        public void SimpleOperators()
-        {
-            Assert.Inconclusive("Not Ready for Unit Testing");
         }
 
         [TestMethod]

@@ -46,22 +46,21 @@ namespace ConverterToolTests
         }
 
         [TestMethod]
+        public void AutoProperties()
+        {
+            generalTest("AutoProperties");
+        }
+
+        [TestMethod]
         public void SimpleEnum()
         {
-            generalTest("SimpleEnumOutter");
-            generalTest("SimpleEnumInner");
+            generalTest("SimpleEnum");
         }
 
         [TestMethod]
         public void NestedClasses()
         {
             generalTest("NestedClasses");
-        }
-
-        [TestMethod]
-        public void MultiNamespace()
-        {
-            generalTest("MultiNamespace");
         }
 
         [TestMethod]
@@ -74,35 +73,11 @@ namespace ConverterToolTests
         }
 
         [TestMethod]
-        public void GeneralProperties()
-        {
-            generalTest("SimpleProperties");
-        }
-
-        [TestMethod]
-        public void AutoProperties()
-        {
-            generalTest("AutoProperties");
-        }
-
-        [TestMethod]
         public void Inheritance()
         {
             generalTest("StandardInheritance");
             generalTest("AbstractInheritance");
             generalTest("InterfaceInheritance");
-        }
-
-        [TestMethod]
-        public void StressTest()
-        {
-            generalTest("StressTest");
-        }
-
-        [TestMethod]
-        public void SimpleOperators()
-        {
-            Assert.Inconclusive("Not Ready for Unit Testing");
         }
 
         [TestMethod]

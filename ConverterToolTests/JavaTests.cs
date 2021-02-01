@@ -27,7 +27,7 @@ namespace ConverterToolTests
 
                 File.Copy(Path.Combine(SolutionPath, $"{fileName}.java"), startFile);
 
-                Converter.RunTool(startFile, outputFile);
+                Converter.RunTool(new string[] { startFile, outputFile });
 
                 //Assert.Inconclusive("Not Ready for Unit Testing");
 

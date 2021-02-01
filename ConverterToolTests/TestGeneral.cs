@@ -24,10 +24,14 @@ namespace ConverterToolTests
 
         protected void Cleanup()
         {
-            var files = Directory.GetFiles(this.IsolatedPath, "*.*");
-            foreach (var file in files)
+            var di = new DirectoryInfo(this.IsolatedPath);
+            foreach (FileInfo file in di.EnumerateFiles())
             {
-                File.Delete(file);
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+                dir.Delete(true);
             }
         }
 

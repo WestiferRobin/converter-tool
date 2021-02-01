@@ -12,10 +12,7 @@ namespace ConverterTool
         {
             try
             {
-                string sourceFile = args[0];
-                string targetFile = args[1];
-
-                Converter.RunTool(args[0], args[1]);
+                Converter.RunTool(args);
             }
             catch (Exception e)
             {

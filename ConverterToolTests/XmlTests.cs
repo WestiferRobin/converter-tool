@@ -23,7 +23,7 @@ namespace ConverterToolTests
 
             File.Copy(Path.Combine(SolutionPath, "SimpleObject.xml"), startFile);
 
-            Converter.RunTool(startFile, outputFile);
+            Converter.RunTool(new string[] { startFile, outputFile });
 
             this.SetBaselinePath("JsonFiles");
             this.BaselinePath = Path.Combine(this.BaselinePath, "SimpleObject.json");
@@ -46,13 +46,16 @@ namespace ConverterToolTests
 
             File.Copy(Path.Combine(SolutionPath, "ArrayObject.xml"), startFile);
 
-            Converter.RunTool(startFile, outputFile);
+            Converter.RunTool(new string[] { startFile, outputFile });
 
             this.SetBaselinePath("JsonFiles");
             this.BaselinePath = Path.Combine(this.BaselinePath, "ArrayObject.json");
 
-            JObject outputObject = JObject.Parse(File.ReadAllText(outputFile));
-            JObject baselineObject = JObject.Parse(File.ReadAllText(this.BaselinePath));
+            var outputText = File.ReadAllText(outputFile);
+            var baselineText = File.ReadAllText(this.BaselinePath);
+
+            var outputObject = JArray.Parse(outputText);
+            var baselineObject = JArray.Parse(baselineText);
 
             Assert.IsTrue(JToken.DeepEquals(outputObject, baselineObject));
 
@@ -69,7 +72,7 @@ namespace ConverterToolTests
 
             File.Copy(Path.Combine(SolutionPath, "NestedObject.xml"), startFile);
 
-            Converter.RunTool(startFile, outputFile);
+            Converter.RunTool(new string[] { startFile, outputFile });
 
             this.SetBaselinePath("JsonFiles");
             this.BaselinePath = Path.Combine(this.BaselinePath, "NestedObject.json");
@@ -88,13 +91,13 @@ namespace ConverterToolTests
             Cleanup();
 
             string startFile = Path.Combine(IsolatedPath, "SimpleObject.xml");
-            string rawFile = Path.Combine(IsolatedPath, "RawOutput.json");
+            string rawFile = Path.Combine(IsolatedPath, "SimpleObject.json");
             string outputFile = Path.Combine(IsolatedPath, "Results.xml");
 
             File.Copy(Path.Combine(SolutionPath, "SimpleObject.xml"), startFile);
 
-            Converter.RunTool(startFile, rawFile);
-            Converter.RunTool(rawFile, outputFile);
+            Converter.RunTool(new string[] { startFile, rawFile });
+            Converter.RunTool(new string[] { rawFile, outputFile });
 
             var startObject = File.ReadAllBytes(startFile);
             var outputObject = File.ReadAllBytes(outputFile);
@@ -117,7 +120,59 @@ namespace ConverterToolTests
         [TestMethod]
         public void MultiFiles()
         {
-            Assert.Inconclusive("Not Ready for Unit Testing");
+            Cleanup();
+
+            string startDir = SolutionPath;
+            string destDir = IsolatedPath;
+            this.SetBaselinePath("JsonFiles");
+
+            Converter.RunTool(new string[] { "-xml", startDir, "-json", destDir });
+
+            CheckMultiFiles(destDir, this.BaselinePath);
+
+            Cleanup();
+        }
+
+        private void CheckMultiFiles(string completePath, string baselinePath)
+        {
+            var completeFiles = Directory.GetFiles(completePath);
+            var completeDir = Directory.GetDirectories(completePath);
+            var baselineDir = baselinePath.EndsWith('/') || baselinePath.EndsWith('\\') ?
+                Path.GetDirectoryName(baselinePath) : baselinePath;
+
+            foreach (var dir in completeDir)
+            {
+                var dirName = Path.GetFileName(dir);
+                var destSubDir = Path.Combine(baselineDir, dirName);
+
+                CheckMultiFiles(dir, destSubDir);
+            }
+
+            foreach (var file in completeFiles)
+            {
+                var destFile = string.Concat(Path.GetFileNameWithoutExtension(file), ".json");
+                var destFull = Path.Combine(baselineDir, destFile);
+
+                try
+                {
+                    JObject outputObject = JObject.Parse(File.ReadAllText(file));
+                    JObject baselineObject = JObject.Parse(File.ReadAllText(destFull));
+
+                    Assert.IsTrue(JToken.DeepEquals(outputObject, baselineObject));
+                }
+                catch
+                {
+
+                    Assert.IsTrue(JToken.DeepEquals(JArray.Parse(File.ReadAllText(file)),
+                        JArray.Parse(File.ReadAllText(destFull))));
+                }
+            }
+        }
+
+        [TestMethod]
+        public void LogMultiFiles()
+        {
+
         }
     }
 }

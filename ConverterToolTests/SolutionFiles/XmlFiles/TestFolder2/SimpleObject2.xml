@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SimpleObject>
+<SimpleObject2>
   <name>John Doe</name>
   <age>22</age>
   <float>123.321</float>
@@ -20,4 +20,4 @@
   </interestArray>
   <neg>-123</neg>
   <neg_doub>-321.123</neg_doub>
-</SimpleObject>
+</SimpleObject2>

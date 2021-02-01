@@ -156,7 +156,7 @@ namespace ConverterTool.LanguageRules
                 }
                 else
                 {
-                    throw new Exception("This is an invlid Double Value");
+                    actualValue = new WrapperString(valueName, this.TokenList[index++]);
                 }
             }
             else if (int.TryParse(this.TokenList[index], out _))
@@ -220,7 +220,15 @@ namespace ConverterTool.LanguageRules
         private int ParseArray(int index, WrapperArray parentNode)
         {
             parentNode.Value = new List<WrapperObject>();
-            string jsonName = parentNode.WrapperName.Split("Array")[0];
+            var testArray = parentNode.WrapperName.Split("Array");
+            string jsonName = string.Empty;
+            for (int testIndex = 0; testIndex < testArray.Length - 1; testIndex++)
+            {
+                if (testArray[testIndex] == "")
+                    jsonName += "Array";
+
+                jsonName += testArray[testIndex];
+            }
             int id = 0;
             while (index < this.TokenList.Count)
             {

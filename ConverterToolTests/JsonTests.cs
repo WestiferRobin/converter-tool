@@ -22,7 +22,7 @@ namespace ConverterToolTests
 
             File.Copy(Path.Combine(SolutionPath, "SimpleObject.json"), startFile);
 
-            Converter.RunTool(startFile, outputFile);
+            Converter.RunTool(new string[] { startFile, outputFile });
 
             this.SetBaselinePath("XmlFiles");
             this.BaselinePath = Path.Combine(this.BaselinePath, "SimpleObject.xml");
@@ -55,10 +55,10 @@ namespace ConverterToolTests
 
             File.Copy(Path.Combine(SolutionPath, "ArrayObject.json"), startFile);
 
-            Converter.RunTool(startFile, outputFile);
+            Converter.RunTool(new string[] { startFile, outputFile });
 
             this.SetBaselinePath("XmlFiles");
-            this.BaselinePath = Path.Combine(this.BaselinePath, "SimpleObject.xml");
+            this.BaselinePath = Path.Combine(this.BaselinePath, "ArrayObject.xml");
 
             var startObject = File.ReadAllBytes(outputFile);
             var outputObject = File.ReadAllBytes(this.BaselinePath);
@@ -66,7 +66,9 @@ namespace ConverterToolTests
             bool isEqual = startObject.Length == outputObject.Length;
             for (int index = 0; index < outputObject.Length; index++)
             {
-                if (startObject[index] != outputObject[index])
+                char startChar = (char)startObject[index];
+                char outputChar = (char)outputObject[index];
+                if (startChar != outputChar)
                 {
                     isEqual = false;
                     break;
@@ -88,18 +90,20 @@ namespace ConverterToolTests
 
             File.Copy(Path.Combine(SolutionPath, "NestedObject.json"), startFile);
 
-            Converter.RunTool(startFile, outputFile);
+            Converter.RunTool(new string[] { startFile, outputFile });
 
             this.SetBaselinePath("XmlFiles");
             this.BaselinePath = Path.Combine(this.BaselinePath, "NestedObject.xml");
 
-            var startObject = File.ReadAllBytes(startFile);
+            var startObject = File.ReadAllBytes(outputFile);
             var outputObject = File.ReadAllBytes(this.BaselinePath);
 
             bool isEqual = startObject.Length == outputObject.Length;
             for (int index = 0; index < outputObject.Length; index++)
             {
-                if (startObject[index] != outputObject[index])
+                char startChar = (char)startObject[index];
+                char outputChar = (char)outputObject[index];
+                if (startChar != outputChar)
                 {
                     isEqual = false;
                     break;
@@ -122,8 +126,8 @@ namespace ConverterToolTests
 
             File.Copy(Path.Combine(SolutionPath, "SimpleObject.json"), startFile);
 
-            Converter.RunTool(startFile, rawFile);
-            Converter.RunTool(rawFile, outputFile);
+            Converter.RunTool(new string[] { startFile, rawFile });
+            Converter.RunTool(new string[] { rawFile, outputFile });
 
             JObject startObject = JObject.Parse(File.ReadAllText(startFile));
             JObject outputObject = JObject.Parse(File.ReadAllText(outputFile));
@@ -136,7 +140,62 @@ namespace ConverterToolTests
         [TestMethod]
         public void MultiFiles()
         {
-            Assert.Inconclusive("Not Ready for Unit Testing");
+            Cleanup();
+
+            string startDir = SolutionPath;
+            string destDir = IsolatedPath;
+            this.SetBaselinePath("XmlFiles");
+
+            Converter.RunTool(new string[] { "-json", startDir, "-xml", destDir });
+
+            CheckMultiFiles(destDir, this.BaselinePath);
+
+            Cleanup();
+        }
+
+        private void CheckMultiFiles(string completePath, string baselinePath)
+        {
+            var completeFiles = Directory.GetFiles(completePath);
+            var completeDir = Directory.GetDirectories(completePath);
+            var baselineDir = baselinePath.EndsWith('/') || baselinePath.EndsWith('\\') ?
+                Path.GetDirectoryName(baselinePath) : baselinePath;
+
+            foreach (var dir in completeDir)
+            {
+                var dirName = Path.GetFileName(dir);
+                var destSubDir = Path.Combine(baselineDir, dirName);
+
+                CheckMultiFiles(dir, destSubDir);
+            }
+
+            foreach (var file in completeFiles)
+            {
+                var destFile = string.Concat(Path.GetFileNameWithoutExtension(file), ".xml");
+                var destFull = Path.Combine(baselineDir, destFile);
+
+                var startObject = File.ReadAllBytes(file);
+                var outputObject = File.ReadAllBytes(destFull);
+
+                bool isEqual = startObject.Length == outputObject.Length;
+                for (int index = 0; index < outputObject.Length; index++)
+                {
+                    char startChar = (char)startObject[index];
+                    char outputChar = (char)outputObject[index];
+                    if (startChar != outputChar)
+                    {
+                        isEqual = false;
+                        break;
+                    }
+                }
+
+                Assert.IsTrue(isEqual);
+            }
+        }
+
+        [TestMethod]
+        public void LogMultiFiles()
+        {
+
         }
     }
 }

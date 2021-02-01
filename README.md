@@ -10,16 +10,11 @@ ConverterTool.exe sourceFile outputFile
 - ConverterTool.exe "C:\Temp\asdf.java" "C:\Temp\asdf.cs"
 
 ## Multiple files
-ConverterTool.exe sourceType sourceDirectory targetType targetDirectory 
-- ConverterTool.exe -java "C:\JavaProject\." -csharp "C:\CsharpProj\."
-- ConverterTool.exe -xml "C:\OldXmls\." -json "C:\NewJsons\."
-
-## Other flags
-- default is nuking the files with default library classes so that conversion is perfect
-- literal flag is an override to be literal instead of assumed like the default way.
-    - ConverterTool.exe -java "C:\JavaProject\." -csharp "C:\CsharpProj\." -lit
-- Log flag
-    - ConverterTool.exe -java "C:\JavaProject\." -csharp "C:\CsharpProj\." -lit -log
+- ConverterTool.exe sourceType sourceDirectory targetType targetDirectory 
+    - ConverterTool.exe -java "C:\JavaProject" -cs "C:\CsharpProj"
+    - ConverterTool.exe -xml "C:\OldXmls" -json "C:\NewJsons"
+- If log files are needed then apply the -log flag and path and it will be applied.
+    - ConverterTool.exe -java "C:\JavaProject" -cs "C:\CsharpProj" -log "C:\Temp"
 
 ## Future updates
 Embedded Update for Converter Tool

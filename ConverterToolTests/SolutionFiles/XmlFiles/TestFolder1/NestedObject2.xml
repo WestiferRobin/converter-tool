@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<NestedObject>
+<NestedObject2>
   <object>
     <name>Mr. Smith</name>
     <age>22</age>
@@ -42,4 +42,4 @@
       </children>
     </childrenArray>
   </object>
-</NestedObject>
+</NestedObject2>

@@ -12,9 +12,50 @@ namespace ConverterTool
         private static LanguageRule targetRules;
 
         // configuration for application to run
+        public static void RunTool(string[] args)
+        {
+            if (args.Length == 2)
+            {
+                var sourceTarget = args[0];
+                var destTarget = args[1];
+
+                RunTool(sourceTarget, destTarget);
+            }
+            else if (args.Length == 4)
+            {
+                var sourceFiles = Directory.GetFiles(args[1]);
+                var sourceDir = Directory.GetDirectories(args[1]);
+                var destExtension = args[2].Replace("-", ".");
+                var sourceExtension = args[0].Replace("-", ".");
+                var destDir = args[3].EndsWith('/') || args[3].EndsWith('\\') ?
+                    Path.GetDirectoryName(args[3]) : args[3];
+
+                foreach (var dir in sourceDir)
+                {
+                    var dirName = Path.GetFileName(dir);
+                    var destSubDir = Path.Combine(destDir, dirName);
+                    Directory.CreateDirectory(destSubDir);
+                    RunTool(new string[] { args[0], dir, args[2], destSubDir });
+                }
+                foreach (var file in sourceFiles)
+                {
+                    if (!file.Contains(sourceExtension)) continue;
+
+                    var destFile = string.Concat(Path.GetFileNameWithoutExtension(file), destExtension);
+                    var destFull = Path.Combine(destDir, destFile);
+
+                    RunTool(new string[] { file, destFull });
+                }
+            }
+            else
+            {
+                Log.Error("Invalid arguments. Please Check again.");
+            }
+
+        }
 
         // include configuration
-        public static void RunTool(string sourceFile, string targetFile)
+        private static void RunTool(string sourceFile, string targetFile)
         {
             Log.Info("Conversion Tool is now running.");
 

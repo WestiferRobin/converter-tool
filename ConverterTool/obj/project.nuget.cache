@@ -1,10 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RPYFtA/myMOFtdcdS6wqwQTiab0qrTRbzIGA1D7TWmSAPkT26H1uTalGRdLTSoxTzIbMMHYhw5UBmLLc+JSevw==",
+  "dgSpecHash": "wx2ZlHOoA2cMHue12dm6HFYX/9tnQtAx/RN1V5ifM4G4aGq4rkWOz52YMat3WJD5K2SYQK+vync/Tgsb/BCvCw==",
   "success": true,
   "projectFilePath": "/Users/wesitferrobin/Projects/workspace/Convertertool/ConverterTool/ConverterTool.csproj",
-  "expectedPackageFiles": [
-    "/Users/wesitferrobin/.nuget/packages/microsoft.aspnetcore.app.ref/3.1.10/microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512"
-  ],
+  "expectedPackageFiles": [],
   "logs": []
 }

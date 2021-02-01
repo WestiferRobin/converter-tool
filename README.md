@@ -22,7 +22,7 @@ ConverterTool.exe sourceType sourceDirectory targetType targetDirectory
     - ConverterTool.exe -java "C:\JavaProject\." -csharp "C:\CsharpProj\." -lit -log
 
 ## Future updates
-Embedded Update for Converter Tool
+1. Embedded Update for Converter Tool
 - For C++, C, and Assembly (TBD for what set archetecture).
-Fullstack Update for Converter Tool
+2. Fullstack Update for Converter Tool
 - For Python, Javascript, Golang, and Typescript.

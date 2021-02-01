@@ -1,21 +1,22 @@
 ﻿<Properties StartupConfiguration="{AAE7CA95-2EDE-4307-AB5B-19FAAA4CF789}|Default">
   <MonoDevelop.Ide.ItemProperties.ConverterToolTests PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/Logger/Log.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterToolTests/CsharpTests.cs">
     <Files>
       <File FileName="ConverterToolTests/XmlTests.cs" Line="9" Column="16" />
       <File FileName="ConverterToolTests/JsonTests.cs" Line="8" Column="16" />
       <File FileName="ConverterTool/Logger/Log.cs" Line="1" Column="1" />
+      <File FileName="ConverterToolTests/CsharpTests.cs" Line="85" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="ConverterTool" expanded="True">
             <Node name="ConverterTool" expanded="True">
-              <Node name="Logger" expanded="True">
-                <Node name="Log.cs" selected="True" />
-              </Node>
+              <Node name="Logger" expanded="True" />
             </Node>
-            <Node name="ConverterToolTests" expanded="True" />
+            <Node name="ConverterToolTests" expanded="True">
+              <Node name="CsharpTests.cs" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>

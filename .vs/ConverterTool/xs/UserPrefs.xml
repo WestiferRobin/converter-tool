@@ -1,9 +1,12 @@
 ﻿<Properties StartupConfiguration="{AAE7CA95-2EDE-4307-AB5B-19FAAA4CF789}|Default">
   <MonoDevelop.Ide.ItemProperties.ConverterToolTests PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterToolTests/JavaTests.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ConverterTool/Program.cs">
     <Files>
-      <File FileName="ConverterToolTests/JavaTests.cs" Line="59" Column="10" />
-      <File FileName="ConverterToolTests/CsharpTests.cs" Line="94" Column="10" />
+      <File FileName="ConverterToolTests/JavaTests.cs" Line="59" Column="1" />
+      <File FileName="ConverterToolTests/CsharpTests.cs" />
+      <File FileName="ConverterToolTests/JsonTests.cs" Line="125" Column="26" />
+      <File FileName="ConverterTool/Converter.cs" Line="17" Column="28" />
+      <File FileName="ConverterTool/Program.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -11,12 +14,10 @@
           <Node name="ConverterTool" expanded="True">
             <Node name="ConverterTool" expanded="True">
               <Node name="LanguageRules" expanded="True" />
+              <Node name="Program.cs" selected="True" />
             </Node>
             <Node name="ConverterToolTests" expanded="True">
-              <Node name="SolutionFiles" expanded="True">
-                <Node name="JavaFiles" expanded="True" />
-              </Node>
-              <Node name="JavaTests.cs" selected="True" />
+              <Node name="SolutionFiles" expanded="True" />
             </Node>
           </Node>
         </State>

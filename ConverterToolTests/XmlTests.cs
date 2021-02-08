@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 using ConverterTool;
 using Newtonsoft.Json.Linq;
@@ -150,6 +149,8 @@ namespace ConverterToolTests
 
             foreach (var file in completeFiles)
             {
+                if (Path.GetExtension(file) == ".txt") continue;
+
                 var destFile = string.Concat(Path.GetFileNameWithoutExtension(file), ".json");
                 var destFull = Path.Combine(baselineDir, destFile);
 
@@ -172,7 +173,45 @@ namespace ConverterToolTests
         [TestMethod]
         public void LogMultiFiles()
         {
+            Cleanup();
 
+            string startDir = SolutionPath;
+            string destDir = IsolatedPath;
+            string fileDir = Path.Combine(IsolatedPath, "log.txt");
+            this.SetBaselinePath("JsonFiles");
+
+            Converter.RunTool(new string[] { "-xml", startDir, "-json", destDir, "-log", fileDir});
+
+            CheckMultiFiles(destDir, this.BaselinePath);
+            Assert.IsTrue(File.Exists(fileDir));
+
+            Cleanup();
+        }
+
+        [TestMethod]
+        public void LogFile()
+        {
+            Cleanup();
+
+            string startFile = Path.Combine(IsolatedPath, "SimpleObject.xml");
+            string outputFile = Path.Combine(IsolatedPath, "SimpleObject.json");
+            string fileDir = Path.Combine(IsolatedPath, "log.txt");
+
+            File.Copy(Path.Combine(SolutionPath, "SimpleObject.xml"), startFile);
+
+            Converter.RunTool(new string[] { startFile, outputFile, "-log", fileDir});
+
+            this.SetBaselinePath("JsonFiles");
+            this.BaselinePath = Path.Combine(this.BaselinePath, "SimpleObject.json");
+
+            JObject outputObject = JObject.Parse(File.ReadAllText(outputFile));
+            JObject baselineObject = JObject.Parse(File.ReadAllText(this.BaselinePath));
+
+            Assert.IsTrue(JToken.DeepEquals(outputObject, baselineObject));
+
+            Assert.IsTrue(File.Exists(fileDir));
+
+            Cleanup();
         }
     }
 }

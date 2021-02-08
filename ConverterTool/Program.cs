@@ -1,7 +1,5 @@
 ﻿using ConverterTool.Logger;
 using System;
-using System.IO;
-using System.Runtime.InteropServices;
 
 namespace ConverterTool
 {

@@ -170,6 +170,8 @@ namespace ConverterToolTests
 
             foreach (var file in completeFiles)
             {
+                if (Path.GetExtension(file) == ".txt") continue;
+
                 var destFile = string.Concat(Path.GetFileNameWithoutExtension(file), ".xml");
                 var destFull = Path.Combine(baselineDir, destFile);
 
@@ -195,7 +197,54 @@ namespace ConverterToolTests
         [TestMethod]
         public void LogMultiFiles()
         {
+            Cleanup();
 
+            string startDir = SolutionPath;
+            string destDir = IsolatedPath;
+            string fileDir = Path.Combine(IsolatedPath, "log.txt");
+            this.SetBaselinePath("XmlFiles");
+
+            Converter.RunTool(new string[] { "-json", startDir, "-xml", destDir, "-log", fileDir });
+
+            CheckMultiFiles(destDir, this.BaselinePath);
+            Assert.IsTrue(File.Exists(fileDir));
+
+            Cleanup();
+        }
+
+        [TestMethod]
+        public void LogFile()
+        {
+            Cleanup();
+
+            string startFile = Path.Combine(IsolatedPath, "SimpleObject.json");
+            string outputFile = Path.Combine(IsolatedPath, "SimpleObject.xml");
+            string fileDir = Path.Combine(IsolatedPath, "log.txt");
+
+            File.Copy(Path.Combine(SolutionPath, "SimpleObject.json"), startFile);
+
+            Converter.RunTool(new string[] { startFile, outputFile, "-log", fileDir });
+
+            this.SetBaselinePath("XmlFiles");
+            this.BaselinePath = Path.Combine(this.BaselinePath, "SimpleObject.xml");
+
+            var startObject = File.ReadAllText(outputFile);
+            var outputObject = File.ReadAllText(this.BaselinePath);
+
+            bool isEqual = startObject.Length == outputObject.Length;
+            for (int index = 0; index < outputObject.Length; index++)
+            {
+                if (startObject[index] != outputObject[index])
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(isEqual);
+            Assert.IsTrue(File.Exists(fileDir));
+
+            Cleanup();
         }
     }
 }

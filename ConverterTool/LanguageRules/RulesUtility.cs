@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace ConverterTool.LanguageRules
 {
     public static class RulesUtility

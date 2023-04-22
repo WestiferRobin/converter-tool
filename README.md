@@ -2,7 +2,7 @@
 
 ## Current Notes
 Java and C# is now in work right now. Will use MuSystem as data.
-Consider on making this a ML project
+Consider on making this a ML project for (C/C++, Python, JavaScript, Kotlin)
 XML and JSON conversion is complete.
 
 ## Individual files
@@ -17,8 +17,3 @@ ConverterTool.exe sourceFile outputFile
 - If log files are needed then apply the -log flag and path and it will be applied.
     - ConverterTool.exe -java "C:\JavaProject" -cs "C:\CsharpProj" -log "C:\Temp"
 
-## Future updates
-1. Embedded Update for Converter Tool
-- For C++, C, and Assembly (TBD for what set archetecture).
-2. Fullstack Update for Converter Tool
-- For Python, Javascript, Golang, and Typescript.

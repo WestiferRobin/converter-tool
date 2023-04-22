@@ -1,7 +1,8 @@
 # Convertertool
 
 ## Current Notes
-Java and C# is now in work right now.
+Java and C# is now in work right now. Will use MuSystem as data.
+Consider on making this a ML project
 XML and JSON conversion is complete.
 
 ## Individual files
